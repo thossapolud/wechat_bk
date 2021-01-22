@@ -105,7 +105,10 @@
           <div class="type_msg">
             <div class="input_msg_write">
               <input @keyup.enter="saveMessage" v-model="message" type="text" class="write_msg" placeholder="Type a message" />
-              <button class="msg_send_btn" type="button"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+
+              <button v-if="message != ''" @click="saveMessage()" class="msg_send_btn" type="button">
+              <v-icon dark right>mdi-send-outline</v-icon>
+              </button>
             </div>
           </div>
         </div>
@@ -124,23 +127,34 @@
         name: 'PrivateChat',
         data() {
             return {
-                message: null,
+                message: '',
                 messages: [],
                 authUser: {}
             }
         },methods: {
+            scrollToBottom(){
+              let box=document.querySelector('.msg_history');
+              box.scrollTop=box.scrollHeight;
+            },
             saveMessage(){ //ส่งข้อมูลไปยัง firebase
                 //save to firestore
                 db.collection('chat').add({
                     message:this.message,
                     author:this.authUser.displayName,
                     createdAt: new Date()
+                }).then(()=>{
+                  this.scrollToBottom();
                 })
                 console.log('test = ', this.message)
                 this.message = null
+
+                setTimeout(()=>{
+                  this.scrollToBottom();
+                },1000);
             },
             fetchMessages(){ //ดึงข้อมูลจาก firebase
                 db.collection("chat").orderBy('createdAt').onSnapshot((querySnapshot) => {
+                  // db.collection("chat").where('author','==',user).orderBy('createdAt').onSnapshot((querySnapshot) => {
                   let allMessages=[];
                   querySnapshot.forEach((doc) => {
                       allMessages.push(doc.data())
@@ -256,9 +270,9 @@ img{ max-width:100%;}
   width: 92%;
  }
  .received_withd_msg p {
-  background: #ebebeb none repeat scroll 0 0;
+  background: #585858 none repeat scroll 0 0;
   border-radius: 3px;
-  color: #646464;
+  color: #ffffff;
   font-size: 14px;
   margin: 0;
   padding: 5px 10px 5px 12px;
@@ -278,7 +292,7 @@ img{ max-width:100%;}
 }
 
  .sent_msg p {
-  background: #05728f none repeat scroll 0 0;
+  background: #00c300 none repeat scroll 0 0;
   border-radius: 3px;
   font-size: 14px;
   margin: 0; color:#fff;
@@ -302,17 +316,17 @@ img{ max-width:100%;}
 
 .type_msg {border-top: 1px solid #c4c4c4;position: relative;}
 .msg_send_btn {
-  background: #05728f none repeat scroll 0 0;
+  background: #00c300 none repeat scroll 0 0;
   border: medium none;
-  border-radius: 50%;
+  border-radius: 20%;
   color: #fff;
   cursor: pointer;
   font-size: 17px;
-  height: 33px;
+  height: 30px;
   position: absolute;
   right: 0;
   top: 11px;
-  width: 33px;
+  width: 40px;
 }
 .messaging { padding: 0 0 50px 0;}
 .msg_history {
