@@ -1,1 +1,42 @@
-<mxfile host="app.diagrams.net" modified="2021-01-23T03:18:03.878Z" agent="5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36" version="14.2.7" etag="oeZmquR52slCUdxE0IcW" type="github"><diagram id="0FH7JVjJzOGyc6dq_qw2">UzV2zq1wL0osyPDNT0nNUTV2VTV2LsrPL4GwciucU3NyVI0MMlNUjV1UjYwMgFjVyA2HrCFY1qAgsSg1rwSLBiADYTaQg2Y1AA==</diagram></mxfile>
+<mxfile host="app.diagrams.net" modified="2021-01-23T03:30:31.786Z" agent="5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36" etag="iDrXSN8R1ruDpG3_hgAd" version="14.2.7" type="github">
+  <diagram id="0FH7JVjJzOGyc6dq_qw2" name="Page-1">
+    <mxGraphModel dx="946" dy="614" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="zh1UzCdw0J6-C0AHqrhb-12" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="zh1UzCdw0J6-C0AHqrhb-3" target="zh1UzCdw0J6-C0AHqrhb-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="zh1UzCdw0J6-C0AHqrhb-3" value="message" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="140" y="160" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="zh1UzCdw0J6-C0AHqrhb-7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" target="zh1UzCdw0J6-C0AHqrhb-3">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="200" y="100" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zh1UzCdw0J6-C0AHqrhb-8" value="User Line" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;align=center;" vertex="1" parent="1">
+          <mxGeometry x="185" y="50" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="zh1UzCdw0J6-C0AHqrhb-18" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="zh1UzCdw0J6-C0AHqrhb-11" target="zh1UzCdw0J6-C0AHqrhb-14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="zh1UzCdw0J6-C0AHqrhb-11" value="fire base" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;align=center;" vertex="1" parent="1">
+          <mxGeometry x="410" y="150" width="60" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="zh1UzCdw0J6-C0AHqrhb-14" value="Web site Chat" style="rounded=0;whiteSpace=wrap;html=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="610" y="160" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="zh1UzCdw0J6-C0AHqrhb-19" value="Data Mesaage Json req.events" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="290" y="210" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="zh1UzCdw0J6-C0AHqrhb-20" value="ตัวอย่าง&amp;nbsp;&lt;span&gt;Data Mesaage Json req.events&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="240" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="zh1UzCdw0J6-C0AHqrhb-22" value="&amp;nbsp;events: [    { &lt;br&gt;&amp;nbsp;type: &#39;message&#39;,&lt;br&gt;&amp;nbsp;replyToken: &#39;da870caaa88141c78365fa44d399c3f2&#39;,&lt;br&gt;&amp;nbsp;source: { userId: &#39;U24f73bc2b54e8d62bf34b892e6d67500&#39;, type: &#39;user&#39; },&lt;br&gt;&amp;nbsp;timestamp: 1611372273540,&lt;br&gt;&amp;nbsp;mode: &#39;active&#39;,&lt;br&gt;&amp;nbsp;message: [{ type: &#39;text&#39;, id: &#39;13429975014392&#39;, text: &#39;test&#39; }],&lt;br&gt;&amp;nbsp;destination: &#39;U42a494c80f5dcdb13017efdf252be7e3&#39;" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="250" width="550" height="160" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
