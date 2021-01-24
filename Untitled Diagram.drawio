@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2021-01-23T03:54:53.566Z" agent="5.0 (Linux; Android 10; ONEPLUS A6000) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.93 Mobile Safari/537.36" etag="l4-W9S6PgsGMp48mJ7hg" version="14.2.7" type="github">
+<mxfile host="app.diagrams.net" modified="2021-01-24T21:48:32.862Z" agent="5.0 (Linux; Android 10; ONEPLUS A6000) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.93 Mobile Safari/537.36" etag="lVsGL1NpbKIUjld7gv0D" version="14.2.7" type="github">
   <diagram id="0FH7JVjJzOGyc6dq_qw2" name="Page-1">
-    <mxGraphModel dx="947" dy="345" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="805" dy="293" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -41,11 +41,17 @@
         <mxCell id="zh1UzCdw0J6-C0AHqrhb-22" value="&amp;nbsp;events: [    { &lt;br&gt;&amp;nbsp;type: &#39;message&#39;,&lt;br&gt;&amp;nbsp;replyToken: &#39;da870caaa88141c78365fa44d399c3f2&#39;,&lt;br&gt;&amp;nbsp;source: { userId: &#39;U24f73bc2b54e8d62bf34b892e6d67500&#39;, type: &#39;user&#39; },&lt;br&gt;&amp;nbsp;timestamp: 1611372273540,&lt;br&gt;&amp;nbsp;mode: &#39;active&#39;,&lt;br&gt;&amp;nbsp;message: [{ type: &#39;text&#39;, id: &#39;13429975014392&#39;, text: &#39;test&#39; }],&lt;br&gt;&amp;nbsp;destination: &#39;U42a494c80f5dcdb13017efdf252be7e3&#39;" style="text;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="40" y="260" width="410" height="160" as="geometry" />
         </mxCell>
-        <mxCell id="PUpHYgLZHcIrCNKitF2E-3" value="Data req from Web" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+        <mxCell id="PUpHYgLZHcIrCNKitF2E-3" value="Data req from Web" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" parent="1" vertex="1">
           <mxGeometry x="490" y="190" width="110" height="20" as="geometry" />
         </mxCell>
-        <mxCell id="PUpHYgLZHcIrCNKitF2E-6" value="ตัวอย่าง data req from web&lt;br&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" vertex="1" parent="1">
+        <mxCell id="PUpHYgLZHcIrCNKitF2E-6" value="ตัวอย่าง data req from web&lt;br&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;" parent="1" vertex="1">
           <mxGeometry x="610" y="240" width="150" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="fwkCEUeP5SDkNSPYLj_J-2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="fwkCEUeP5SDkNSPYLj_J-1" target="zh1UzCdw0J6-C0AHqrhb-14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fwkCEUeP5SDkNSPYLj_J-1" value="User line ad" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="655" y="50" width="30" height="60" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
