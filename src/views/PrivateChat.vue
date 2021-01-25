@@ -27,11 +27,11 @@
               </div>
             </div> -->
           <div v-for="item in arrayReceiverlineUserId" :key="item.index" class="chat_list">
-              <div class="chat_people">
+              <div v-if="item !== senderlineUserId" class="chat_people">
                 <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
                 <div class="chat_ib" @click="fetchLineMessagesByUser(item)">
                   <h5 >{{item}}<span class="chat_date">Dec 25</span></h5>
-                  <p>Test, which is a new approach to have all solutions 
+                  <p >Test, which is a new approach to have all solutions 
                     astrology under one roof.</p>
                 </div>
               </div>
@@ -45,12 +45,24 @@
 
             <div v-for="item in messageByUser" :key="item.index" class="incoming_msg">
 
-              <div :class="[item.author===authUser.displayName?'sent_msg':'received_msg']">
+              <div :class="[item.vdestination!==senderlineUserId?'sent_msg':'received_msg']">
                 <div class="received_withd_msg">
                   <!-- <p>{{item.message}}</p> -->
-                  <p>{{item.vreply_message}}</p>
+                  <br>
+                  <p v-if="item.statusSend!='1'">{{item.vreply_message}}</p>
+                  <br v-if="item.statusSend =='1'">
+                  <p v-if="item.statusSend =='1'" style="background: #00c300 none repeat scroll 0 0;
+                  border-radius: 3px;
+                  font-size: 14px;
+                  margin: 0; color:#fff;
+                  padding: 5px 10px 5px 12px;
+                  width:100%;
+                  float: right;
+                  padding: 30px 15px 0 25px;
+                  width: 60%;">{{item.vreply_message}}</p>
+                  <br>
                   <!--<span class="time_date"> {{item.author}}</span>-->
-                  <span class="time_date">user line {{item.vreply_line_userID}}</span>
+                  <!--<span class="time_date">user line {{item.vreply_line_userID}}</span> -->
                 </div>
               </div>
             </div>
@@ -68,8 +80,6 @@
         </div>
       </div>
       
-      
-      <p class="text-center top_spac"> Design by <a target="_blank" href="#">Sunil Rajput</a></p>
       
     </div>
     </div>
@@ -115,14 +125,15 @@
                 },1000);
             },
             sendMessage(){
+              console.log('testttttt ===',this.receiverlineUserId)
               axios.post(APIURL+'/reply',{"message" : this.message,
-                                            "sendTo" : this.receiverlineUserId}).then((response)=>{
+                                            "sendTo" : this.receiverlineUserId,
+                                            "senderlineUserId" : this.senderlineUserId}).then((response)=>{
                 console.log('test=',response.data)
                 console.log('url',APIURL)
               })
 
               this.message = null
-              
               setTimeout(()=>{
                   this.scrollToBottom();
                 },1000);
@@ -135,7 +146,7 @@
                       allMessages.push(doc.data())
                   })
                   this.messages=allMessages;
-                  console.log('this.messages=',this.messages);
+                  // console.log('this.messages=',this.messages);
               });
             },
             fetchLineMessages(){ //ดึงข้อมูลจาก firebase
@@ -166,22 +177,18 @@
               })
             },
             fetchLineMessagesByUser(lineUserId){
-              // this.messageByUser=[];
+              this.receiverlineUserId = lineUserId
+              // console.log('test line user id = ', this.receiverlineUserId);
               db.collection("lineMessage").where('vreply_line_userID','==',lineUserId).orderBy("createdAt").onSnapshot((querySnapshot)=>{
                 let Msg=[];
                 querySnapshot.forEach((doc) => {
                       Msg.push(doc.data())
                   })
                   this.messageByUser=Msg
-                  // console.log('last reply = ', this.messageByUser.pop().vreply_token)
-                  // this.lastReplyToken = this.messageByUser.pop().vreply_token
-                  console.log('test = lineUserId',this.messageByUser)
+                  // console.log('test = lineUserId',this.messageByUser)
               })
-
-        
-              console.log('test = lineUserId',this.messageByUser)
-              this.receiverlineUserId = lineUserId
-              // console.log('test data ',this.messageByUser.sort())
+              // console.log('test = lineUserId',this.messageByUser)
+              console.log('test data ',this.messageByUser.sort())
             }
             
         },
