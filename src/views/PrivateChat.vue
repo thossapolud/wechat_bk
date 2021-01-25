@@ -16,7 +16,7 @@
             </div>
           </div>
           <div class="inbox_chat">
-            <div class="chat_list active_chat">
+            <!-- <div class="chat_list active_chat">
               <div class="chat_people">
                 <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
                 <div class="chat_ib">
@@ -25,78 +25,32 @@
                     astrology under one roof.</p>
                 </div>
               </div>
-            </div>
-            <div class="chat_list">
+            </div> -->
+          <div v-for="item in arrayReceiverlineUserId" :key="item.index" class="chat_list">
               <div class="chat_people">
                 <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-                <div class="chat_ib">
-                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
+                <div class="chat_ib" @click="fetchLineMessagesByUser(item)">
+                  <h5 >{{item}}<span class="chat_date">Dec 25</span></h5>
                   <p>Test, which is a new approach to have all solutions 
                     astrology under one roof.</p>
                 </div>
               </div>
             </div>
-            <div class="chat_list">
-              <div class="chat_people">
-                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-                <div class="chat_ib">
-                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
-                  <p>Test, which is a new approach to have all solutions 
-                    astrology under one roof.</p>
-                </div>
-              </div>
-            </div>
-            <div class="chat_list">
-              <div class="chat_people">
-                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-                <div class="chat_ib">
-                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
-                  <p>Test, which is a new approach to have all solutions 
-                    astrology under one roof.</p>
-                </div>
-              </div>
-            </div>
-            <div class="chat_list">
-              <div class="chat_people">
-                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-                <div class="chat_ib">
-                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
-                  <p>Test, which is a new approach to have all solutions 
-                    astrology under one roof.</p>
-                </div>
-              </div>
-            </div>
-            <div class="chat_list">
-              <div class="chat_people">
-                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-                <div class="chat_ib">
-                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
-                  <p>Test, which is a new approach to have all solutions 
-                    astrology under one roof.</p>
-                </div>
-              </div>
-            </div>
-            <div class="chat_list">
-              <div class="chat_people">
-                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-                <div class="chat_ib">
-                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
-                  <p>Test, which is a new approach to have all solutions 
-                    astrology under one roof.</p>
-                </div>
-              </div>
-            </div>
+    
           </div>
         </div>
+
         <div class="mesgs">
           <div class="msg_history">
 
-            <div v-for="item in messages" :key="item.index" class="incoming_msg">
+            <div v-for="item in messageByUser" :key="item.index" class="incoming_msg">
 
               <div :class="[item.author===authUser.displayName?'sent_msg':'received_msg']">
                 <div class="received_withd_msg">
-                  <p>{{item.message}}</p>
-                  <span class="time_date"> {{item.author}}</span>
+                  <!-- <p>{{item.message}}</p> -->
+                  <p>{{item.vreply_message}}</p>
+                  <!--<span class="time_date"> {{item.author}}</span>-->
+                  <span class="time_date">user line {{item.vreply_line_userID}}</span>
                 </div>
               </div>
             </div>
@@ -104,9 +58,9 @@
           </div>
           <div class="type_msg">
             <div class="input_msg_write">
-              <input @keyup.enter="saveMessage" v-model="message" type="text" class="write_msg" placeholder="Type a message" />
+              <input @keyup.enter="sendMessage" v-model="message" type="text" class="write_msg" placeholder="Type a message" />
 
-              <button v-if="message != ''" @click="saveMessage()" class="msg_send_btn" type="button">
+              <button v-if="message != ''" @click="sendMessage()" class="msg_send_btn" type="button">
               <v-icon dark right>mdi-send-outline</v-icon>
               </button>
             </div>
@@ -123,13 +77,21 @@
 
 <script>
     import firebase from 'firebase'
+    const axios = require("axios");
+    const APIURL = "http://127.0.0.1:3000";
     export default {
         name: 'PrivateChat',
         data() {
             return {
                 message: '',
                 messages: [],
-                authUser: {}
+                messageByUser: [],
+                authUser: {},
+                receiverlineUserId : '',
+                arrayReceiverlineUserId :[],
+                lastReplyToken:'',
+                // senderlineUserId : ''
+                senderlineUserId:'U42a494c80f5dcdb13017efdf252be7e3'
             }
         },methods: {
             scrollToBottom(){
@@ -152,6 +114,19 @@
                   this.scrollToBottom();
                 },1000);
             },
+            sendMessage(){
+              axios.post(APIURL+'/reply',{"message" : this.message,
+                                            "sendTo" : this.receiverlineUserId}).then((response)=>{
+                console.log('test=',response.data)
+                console.log('url',APIURL)
+              })
+
+              this.message = null
+              
+              setTimeout(()=>{
+                  this.scrollToBottom();
+                },1000);
+            },
             fetchMessages(){ //ดึงข้อมูลจาก firebase
                 db.collection("chat").orderBy('createdAt').onSnapshot((querySnapshot) => {
                   // db.collection("chat").where('author','==',user).orderBy('createdAt').onSnapshot((querySnapshot) => {
@@ -162,8 +137,55 @@
                   this.messages=allMessages;
                   console.log('this.messages=',this.messages);
               });
+            },
+            fetchLineMessages(){ //ดึงข้อมูลจาก firebase
+                db.collection("lineMessage").orderBy('createdAt').onSnapshot((querySnapshot) => {
+                  // db.collection("chat").where('author','==',user).orderBy('createdAt').onSnapshot((querySnapshot) => {
+                  let allMessages=[];
+                  querySnapshot.forEach((doc) => {
+                      allMessages.push(doc.data())
+                  })
+                  this.messages=allMessages;
+                  // console.log('this.messages=',this.messages);
+              });
+            },
+            fetchLineUserIdRecent(){
+              db.collection("lineMessage").onSnapshot((querySnapshot)=>{
+                let data=[];
+                let varrayReceiverlineUserId = [];
+                // let reply_line_userID=[];
+                querySnapshot.forEach((doc)=>{   
+                    data.push(doc.data())
+                    // console.log('this doc == ', doc.data().vreply_line_userID)
+                    varrayReceiverlineUserId.push(doc.data().vreply_line_userID)
+                    
+                    // reply_line_userID.push(doc.data())
+                })
+                this.arrayReceiverlineUserId = new Set(varrayReceiverlineUserId);
+                // console.log('test array = ', this.arrayReceiverlineUserId)
+              })
+            },
+            fetchLineMessagesByUser(lineUserId){
+              // this.messageByUser=[];
+              db.collection("lineMessage").where('vreply_line_userID','==',lineUserId).orderBy("createdAt").onSnapshot((querySnapshot)=>{
+                let Msg=[];
+                querySnapshot.forEach((doc) => {
+                      Msg.push(doc.data())
+                  })
+                  this.messageByUser=Msg
+                  // console.log('last reply = ', this.messageByUser.pop().vreply_token)
+                  // this.lastReplyToken = this.messageByUser.pop().vreply_token
+                  console.log('test = lineUserId',this.messageByUser)
+              })
+
+        
+              console.log('test = lineUserId',this.messageByUser)
+              this.receiverlineUserId = lineUserId
+              // console.log('test data ',this.messageByUser.sort())
             }
+            
         },
+        
         created() {
           firebase.auth().onAuthStateChanged(user=>{
             if(user){
@@ -175,8 +197,9 @@
 
           )
 
-
-            this.fetchMessages();
+          this.fetchLineMessages();
+          this.fetchLineUserIdRecent();
+            // this.fetchMessages();
         },
         beforeRouteEnter (to, from, next) {
           next(vm=>{
