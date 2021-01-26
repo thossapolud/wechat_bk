@@ -1,9 +1,11 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Chat</router-link> |
-      <router-link to="/about">About</router-link>|
-      <router-link to="/admin">Admin</router-link>
+      
+      <!-- <router-link to="/about">About</router-link>| -->
+      <router-link to="/groupLineList">Group Line List</router-link>|
+      <router-link to="/selectGroupLine/:groupline_name">Select Group Line Page</router-link>|
+      <router-link to="/">Chat</router-link> 
     </div>
     <router-view/>
   </div>

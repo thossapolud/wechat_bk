@@ -4,6 +4,9 @@ import Home from '../views/Home.vue'
 import PrivateChat from '../views/PrivateChat.vue'
 import Login  from '../views/Login.vue'
 import Admin  from '../views/Admin.vue'
+import GroupLineList  from '../views/groupLineList.vue'
+import SelectGroupLine  from '../views/selectGroupLine.vue'
+
 
 Vue.use(VueRouter)
 
@@ -23,6 +26,16 @@ const routes = [
     path: '/admin',
     name: 'Admin',
     component: Admin
+  },
+  {
+    path: '/groupLineList',
+    name: 'GroupLineList',
+    component: GroupLineList
+  },
+  {
+    path: '/selectGroupLine/:groupline_name',
+    name: 'SelectGroupLine',
+    component: SelectGroupLine
   },
   {
     path: '/about',
