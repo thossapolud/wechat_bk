@@ -8,9 +8,15 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.4",
+<<<<<<< Updated upstream
+=======
+    "@mdi/font": "^3.6.95",
+>>>>>>> Stashed changes
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
+    "cors": "^2.8.5",
     "firebase": "^8.2.3",
+    "roboto-fontface": "*",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",
     "vuetify": "^2.2.11",

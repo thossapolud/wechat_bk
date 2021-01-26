@@ -71,9 +71,17 @@
           </div>
           <div class="type_msg">
             <div class="input_msg_write">
+<<<<<<< Updated upstream
               <input @keyup.enter="sendMessage" v-model="message" type="text" class="write_msg" placeholder="Type a message" />
               
               <v-btn  v-if="message != ''" @click="sendMessage()" class="msg_send_btn" type="button">  <v-icon dark right >mdi-send-outline</v-icon></v-btn>
+=======
+              <input @keyup.enter="saveMessage" v-model="message" type="text" class="write_msg" placeholder="Type a message" />
+
+              <button v-if="message != ''" @click="saveMessage() , getMessageLine()" class="msg_send_btn" type="button">
+              <v-icon dark right>mdi-send-outline</v-icon>
+              </button>
+>>>>>>> Stashed changes
             </div>
           </div>
         </div>
@@ -85,9 +93,17 @@
 </template>
 
 <script>
+    // import axios from 'axios'
     import firebase from 'firebase'
+<<<<<<< Updated upstream
     const axios = require("axios");
     const APIURL = "http://127.0.0.1:3000";
+=======
+    const APIURL = "http://127.0.0.1:3000";
+    // const APIURL = "http://monkeycave.net/joe/PM";
+    const axios = require("axios");
+
+>>>>>>> Stashed changes
     export default {
         name: 'PrivateChat',
         data() {
@@ -105,6 +121,11 @@
                 senderlineUserId:'U42a494c80f5dcdb13017efdf252be7e3'
             }
         },methods: {
+              getMessageLine(){
+              axios.post(APIURL+'/main/getdata').then((response)=>{
+                console.log('test=',response.data)
+              })
+            },
             scrollToBottom(){
               let box=document.querySelector('.msg_history');
               box.scrollTop=box.scrollHeight;
@@ -202,12 +223,15 @@
               this.authUser={}
             }
           }
-
           )
+<<<<<<< Updated upstream
 
           this.fetchLineMessages();
           this.fetchLineUserIdRecent();
             // this.fetchMessages();
+=======
+            this.fetchMessages();
+>>>>>>> Stashed changes
         },
         beforeRouteEnter (to, from, next) {
           next(vm=>{
