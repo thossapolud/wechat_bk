@@ -49,9 +49,10 @@
                 <div class="received_withd_msg">
                   <!-- <p>{{item.message}}</p> -->
                   <br>
-                  <p v-if="item.statusSend!='1'">{{item.vreply_message}}</p>
-                  <br v-if="item.statusSend =='1'">
-                  <p v-if="item.statusSend =='1'" style="background: #00c300 none repeat scroll 0 0;
+                  <p v-if="item.statusMessage!='send'">{{item.vreply_message}}</p>
+                  <br v-if="item.statusMessage =='send'">
+                  <p v-if="item.statusMessage =='send'" 
+                  style="background: #00c300 none repeat scroll 0 0;
                   border-radius: 3px;
                   font-size: 14px;
                   margin: 0; color:#fff;
@@ -71,10 +72,8 @@
           <div class="type_msg">
             <div class="input_msg_write">
               <input @keyup.enter="sendMessage" v-model="message" type="text" class="write_msg" placeholder="Type a message" />
-
-              <button v-if="message != ''" @click="sendMessage()" class="msg_send_btn" type="button">
-              <v-icon dark right>mdi-send-outline</v-icon>
-              </button>
+              
+              <v-btn  v-if="message != ''" @click="sendMessage()" class="msg_send_btn" type="button">  <v-icon dark right >mdi-send-outline</v-icon></v-btn>
             </div>
           </div>
         </div>
@@ -99,6 +98,8 @@
                 authUser: {},
                 receiverlineUserId : '',
                 arrayReceiverlineUserId :[],
+                arrayReceiverlineMessage : [],
+                arrayReceiverLastTime : [],
                 lastReplyToken:'',
                 // senderlineUserId : ''
                 senderlineUserId:'U42a494c80f5dcdb13017efdf252be7e3'
@@ -138,17 +139,6 @@
                   this.scrollToBottom();
                 },1000);
             },
-            fetchMessages(){ //ดึงข้อมูลจาก firebase
-                db.collection("chat").orderBy('createdAt').onSnapshot((querySnapshot) => {
-                  // db.collection("chat").where('author','==',user).orderBy('createdAt').onSnapshot((querySnapshot) => {
-                  let allMessages=[];
-                  querySnapshot.forEach((doc) => {
-                      allMessages.push(doc.data())
-                  })
-                  this.messages=allMessages;
-                  // console.log('this.messages=',this.messages);
-              });
-            },
             fetchLineMessages(){ //ดึงข้อมูลจาก firebase
                 db.collection("lineMessage").orderBy('createdAt').onSnapshot((querySnapshot) => {
                   // db.collection("chat").where('author','==',user).orderBy('createdAt').onSnapshot((querySnapshot) => {
@@ -157,24 +147,36 @@
                       allMessages.push(doc.data())
                   })
                   this.messages=allMessages;
-                  // console.log('this.messages=',this.messages);
+                  console.log('this.messages=',this.messages);
               });
             },
             fetchLineUserIdRecent(){
               db.collection("lineMessage").onSnapshot((querySnapshot)=>{
                 let data=[];
                 let varrayReceiverlineUserId = [];
+                let vartest = [];
                 // let reply_line_userID=[];
                 querySnapshot.forEach((doc)=>{   
                     data.push(doc.data())
-                    // console.log('this doc == ', doc.data().vreply_line_userID)
+                    // console.log('this doc == ', doc.data())
                     varrayReceiverlineUserId.push(doc.data().vreply_line_userID)
+                    
+                    vartest.push({
+                     vreply_line_userID: doc.data().vreply_line_userID,
+                     vreply_message: doc.data().vreply_message
+
+                     })
+                    // varrayReceiverLastTime
                     
                     // reply_line_userID.push(doc.data())
                 })
-                this.arrayReceiverlineUserId = new Set(varrayReceiverlineUserId);
-                // console.log('test array = ', this.arrayReceiverlineUserId)
+
+                this.arrayReceiverlineUserId = new Set(varrayReceiverlineUserId)
+                // this.arrayReceiverlineUserId = new Set(varrayReceiverlineUserId)
+                // console.log('tetst------',new Set(varrayReceiverlineUserId));
+              
               })
+              
             },
             fetchLineMessagesByUser(lineUserId){
               this.receiverlineUserId = lineUserId
@@ -185,10 +187,9 @@
                       Msg.push(doc.data())
                   })
                   this.messageByUser=Msg
-                  // console.log('test = lineUserId',this.messageByUser)
               })
-              // console.log('test = lineUserId',this.messageByUser)
-              console.log('test data ',this.messageByUser.sort())
+              // console.log('test data ',this.messageByUser.sort())
+              // console.log('test data ',this.messageByUser.sort())
             }
             
         },
