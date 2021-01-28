@@ -3,13 +3,13 @@
         <div>   
             <v-simple-table >
             <template v-slot:default>
-            <thead>
+            <thead  height="70vh" fixed-header style="width: 100%">
                 <tr>
                 <th class="text-left">ลำดับ</th>
                 <th class="text-left">ชื่อไลน์</th>
                 <th class="text-left">Line@ID</th>
                 <th class="text-left">Ch.Secret</th>
-                <th class="text-left" >Ch.Access Token</th>
+                <th class="text-left"  width="50">Ch.Access Token</th>
                 <th class="text-left"> Rich Menu A</th>
                 <th class="text-left">Rich Menu B</th>
                 <th class="text-left">URL</th>
@@ -20,7 +20,7 @@
                 </th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody >
                 <tr
                 v-for="item in allGroupLine"
                 :key="item.name"
@@ -29,7 +29,7 @@
                 <td class="text-left">{{ item.groupline_name }}</td>
                 <td class="text-left">{{ item.groupline_lineid }}</td>
                 <td class="text-left">{{ item.groupline_secret }}</td>
-                <td class="text-left">{{ item.groupline_token }}</td>
+                <td class="text-left" style="width: 200px">{{ item.groupline_token }}</td>
                 <td class="text-left">{{ item.groupline_rich_menu_a }}</td>
                 <td class="text-left">{{ item.groupline_rich_menu_b }}</td>
                 <td class="text-left">{{ item.url }}</td>
@@ -76,6 +76,7 @@ const APIURL = "http://127.0.0.1:3000";
     export default {
         data() {
             return {
+               
                 groupLine:[],
                 allGroupLine: [],
                 vgroupline_name: '',

@@ -45,13 +45,13 @@
 
             <div v-for="item in messageByUser" :key="item.index" class="incoming_msg">
 
-              <div :class="[item.vdestination!==senderlineUserId?'sent_msg':'received_msg']">
+              <div :class="[item.lineAdId!==senderlineUserId?'sent_msg':'received_msg']">
                 <div class="received_withd_msg">
                   <!-- <p>{{item.message}}</p> -->
                   <br>
-                  <p v-if="item.statusMessage!='send'">{{item.vreply_message}}</p>
-                  <br v-if="item.statusMessage =='send'">
-                  <p v-if="item.statusMessage =='send'" 
+                  <p v-if="item.type!='out'">{{item.message}}</p>
+                  <br v-if="item.type =='out'">
+                  <p v-if="item.type =='out'" 
                   style="background: #00c300 none repeat scroll 0 0;
                   border-radius: 3px;
                   font-size: 14px;
@@ -60,7 +60,7 @@
                   width:100%;
                   float: right;
                   padding: 30px 15px 0 25px;
-                  width: 60%;">{{item.vreply_message}}</p>
+                  width: 60%;">{{item.message}}</p>
                   <br>
                   <!--<span class="time_date"> {{item.author}}</span>-->
                   <!--<span class="time_date">user line {{item.vreply_line_userID}}</span> -->
@@ -71,39 +71,21 @@
           </div>
           <div class="type_msg">
             <div class="input_msg_write">
-<<<<<<< Updated upstream
               <input @keyup.enter="sendMessage" v-model="message" type="text" class="write_msg" placeholder="Type a message" />
               
               <v-btn  v-if="message != ''" @click="sendMessage()" class="msg_send_btn" type="button">  <v-icon dark right >mdi-send-outline</v-icon></v-btn>
-=======
-              <input @keyup.enter="saveMessage" v-model="message" type="text" class="write_msg" placeholder="Type a message" />
-
-              <button v-if="message != ''" @click="saveMessage() , getMessageLine()" class="msg_send_btn" type="button">
-              <v-icon dark right>mdi-send-outline</v-icon>
-              </button>
->>>>>>> Stashed changes
             </div>
           </div>
         </div>
       </div>
-      
-      
     </div>
     </div>
 </template>
 
 <script>
-    // import axios from 'axios'
     import firebase from 'firebase'
-<<<<<<< Updated upstream
     const axios = require("axios");
     const APIURL = "http://127.0.0.1:3000";
-=======
-    const APIURL = "http://127.0.0.1:3000";
-    // const APIURL = "http://monkeycave.net/joe/PM";
-    const axios = require("axios");
-
->>>>>>> Stashed changes
     export default {
         name: 'PrivateChat',
         data() {
@@ -121,11 +103,6 @@
                 senderlineUserId:'U42a494c80f5dcdb13017efdf252be7e3'
             }
         },methods: {
-              getMessageLine(){
-              axios.post(APIURL+'/main/getdata').then((response)=>{
-                console.log('test=',response.data)
-              })
-            },
             scrollToBottom(){
               let box=document.querySelector('.msg_history');
               box.scrollTop=box.scrollHeight;
@@ -148,9 +125,17 @@
             },
             sendMessage(){
               console.log('testttttt ===',this.receiverlineUserId)
-              axios.post(APIURL+'/reply',{"message" : this.message,
-                                            "sendTo" : this.receiverlineUserId,
-                                            "senderlineUserId" : this.senderlineUserId}).then((response)=>{
+              axios.post(APIURL+'/reply',{  
+                                            "reply_token" : '',
+                                            "message" : this.message,
+                                            "lineUserId" : this.receiverlineUserId,
+                                            "typeMessage" : 'text',
+                                            "vmod" : 'active',
+                                            "lineAdId" : this.senderlineUserId,
+                                            "type" : 'out',
+                                            "read" : 1,
+                                            "createdAt" : new Date()
+                                            }).then((response)=>{
                 console.log('test=',response.data)
                 console.log('url',APIURL)
               })
@@ -175,44 +160,32 @@
               db.collection("lineMessage").onSnapshot((querySnapshot)=>{
                 let data=[];
                 let varrayReceiverlineUserId = [];
-                let vartest = [];
-                // let reply_line_userID=[];
                 querySnapshot.forEach((doc)=>{   
                     data.push(doc.data())
-                    // console.log('this doc == ', doc.data())
-                    varrayReceiverlineUserId.push(doc.data().vreply_line_userID)
-                    
-                    vartest.push({
-                     vreply_line_userID: doc.data().vreply_line_userID,
-                     vreply_message: doc.data().vreply_message
-
-                     })
-                    // varrayReceiverLastTime
-                    
-                    // reply_line_userID.push(doc.data())
+                    varrayReceiverlineUserId.push(doc.data().lineUserId)
                 })
 
                 this.arrayReceiverlineUserId = new Set(varrayReceiverlineUserId)
                 // this.arrayReceiverlineUserId = new Set(varrayReceiverlineUserId)
-                // console.log('tetst------',new Set(varrayReceiverlineUserId));
+                console.log('tetst------',new Set(varrayReceiverlineUserId));
               
               })
               
             },
             fetchLineMessagesByUser(lineUserId){
               this.receiverlineUserId = lineUserId
-              // console.log('test line user id = ', this.receiverlineUserId);
-              db.collection("lineMessage").where('vreply_line_userID','==',lineUserId).orderBy("createdAt").onSnapshot((querySnapshot)=>{
+
+              console.log('test line user id = ', this.receiverlineUserId);
+              db.collection("lineMessage").where('lineUserId','==',lineUserId).orderBy("createdAt" , 'asc').onSnapshot((querySnapshot)=>{
                 let Msg=[];
                 querySnapshot.forEach((doc) => {
-                      Msg.push(doc.data())
+                      this.messageByUser.push(doc.data())
                   })
-                  this.messageByUser=Msg
+                  // this.messageByUser=Msg
               })
-              // console.log('test data ',this.messageByUser.sort())
+              console.log('test data ',this.messageByUser)
               // console.log('test data ',this.messageByUser.sort())
             }
-            
         },
         
         created() {
@@ -224,14 +197,9 @@
             }
           }
           )
-<<<<<<< Updated upstream
-
           this.fetchLineMessages();
           this.fetchLineUserIdRecent();
             // this.fetchMessages();
-=======
-            this.fetchMessages();
->>>>>>> Stashed changes
         },
         beforeRouteEnter (to, from, next) {
           next(vm=>{
@@ -243,7 +211,6 @@
               }else{
                 vm.$router.push('/login')
               }
-
             })
           })
         }

@@ -3,9 +3,10 @@
     <div id="nav">
       
       <!-- <router-link to="/about">About</router-link>| -->
-      <router-link to="/groupLineList">Group Line List</router-link>|
-      <router-link to="/selectGroupLine/:groupline_name">Select Group Line Page</router-link>|
-      <router-link to="/">Chat</router-link> 
+      <router-link to="/groupLineListDev">Group Line List</router-link>|
+      <router-link to="/userManage">User Manage</router-link>|
+      <router-link to="/responsible">Responsible</router-link>|
+      <router-link to="/">Chat</router-link> |
     </div>
     <router-view/>
   </div>

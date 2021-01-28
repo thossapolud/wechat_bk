@@ -5,7 +5,9 @@ import PrivateChat from '../views/PrivateChat.vue'
 import Login  from '../views/Login.vue'
 import Admin  from '../views/Admin.vue'
 import GroupLineList  from '../views/groupLineList.vue'
-import SelectGroupLine  from '../views/selectGroupLine.vue'
+import GroupLineListDev from '../views/groupLineListDev.vue'
+import UserManage from '../views/userManage.vue'
+import Responsible from '../views/responsible.vue'
 
 
 Vue.use(VueRouter)
@@ -33,9 +35,19 @@ const routes = [
     component: GroupLineList
   },
   {
-    path: '/selectGroupLine/:groupline_name',
-    name: 'SelectGroupLine',
-    component: SelectGroupLine
+    path: '/groupLineListDev',
+    name: 'GroupLineListDev',
+    component: GroupLineListDev
+  },
+  {
+    path: '/userManage',
+    name: 'UserManage',
+    component: UserManage
+  },
+  {
+    path: '/responsible',
+    name: 'Responsible',
+    component: Responsible
   },
   {
     path: '/about',
