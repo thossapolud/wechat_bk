@@ -1,21 +1,21 @@
 <template>
   <v-app>
     <div>
-        <v-data-table :headers="headers" :items="allGroupLine" sort-by="calories" class="elevation-1" height="70vh" fixed-header style="width: 100%">
+        <v-data-table :headers="headers" :items="allGroupLine" class="elevation-1" height="70vh" fixed-header style="width: 100%">
     <template v-slot:top>
       <v-toolbar flat >
         <v-toolbar-title>Gruoup Line Manage</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
-        <v-btn color="primary" dark class="mb-2" @click="openDialogInsert()">New User </v-btn>
+        <v-btn color="primary" dark class="mb-2" @click="openDialogInsert()">New Group </v-btn>
       </v-toolbar>
       
     </template>
-    <template v-slot:item.groupline_textcolor="{item}">
-      <v-btn :color='item.groupline_textcolor' elevation="2" x-small></v-btn>
+    <template v-slot:item.groupLine_textcolor="{item}">
+      <v-btn :color='item.groupLine_textcolor' elevation="2" x-small></v-btn>
     </template>
-    <template v-slot:item.groupline_chatcolor="{item}">
-      <v-btn :color='item.groupline_chatcolor' elevation="2" x-small></v-btn>
+    <template v-slot:item.groupLine_chatcolor="{item}">
+      <v-btn :color='item.groupLine_chatcolor' elevation="2" x-small></v-btn>
     </template>
     <template v-slot:item.actions="{item}">
       <v-icon small class="mr-2" @click="editGroupLine(item)">
@@ -34,6 +34,7 @@
 
 
 <v-row justify="center">
+
     <v-dialog v-model="dialogInsert" max-width="500px">
       <v-card>
         <v-card-title>
@@ -112,9 +113,9 @@
                 <v-text-field label="URL" type="username" v-model="vurl" ></v-text-field>
               </v-col>
               <v-col cols="12">
-                <v-btn @click="checkData(editVlineTextcolor.hex)" ></v-btn><br>
+                <!--<v-btn @click="checkData(editVlineTextcolor.hex)" ></v-btn><br>-->
                  <v-btn :color='vlineTextcolor' elevation="2" x-small>สีชื่อ</v-btn>
-                <v-color-picker disabled hide-canvas hide-inputs hide-mode-switch hide-sliders mode="hexa" show-swatches swatches-max-height="100" v-model="editVlineTextcolor" @click="checkData(editVlineTextcolor)"></v-color-picker>
+                <v-color-picker disabled hide-canvas hide-inputs hide-mode-switch hide-sliders mode="hexa" show-swatches swatches-max-height="100" v-model="editVlineTextcolor" ></v-color-picker>
               </v-col>
                 <v-col cols="12">
                 <v-btn :color='vlineChatcolor' elevation="2" x-small>สีแชท</v-btn>
@@ -159,18 +160,19 @@ const axios = require("axios");
 const APIURL = "http://127.0.0.1:3000";
   export default {
     data: () => ({
-        editVlineTextcolor:null,
-        editVlineChatcolor:null,
-        vurl:null,
-        vlineAccessToken:null,
-        vId:null,
-        vlineId:null,
-        vlineName:null,
-        vlineRichMenuA:null,
-        vlineRichMenuB:null,
-        vlineSecret:null,
-        vlineTextcolor:null,
-        vlineChatcolor:null,
+        indexKey:'',
+        editVlineTextcolor:'',
+        editVlineChatcolor:'',
+        vurl:'',
+        vlineAccessToken:'',
+        vId:'',
+        vlineId:'',
+        vlineName:'',
+        vlineRichMenuA:'',
+        vlineRichMenuB:'',
+        vlineSecret:'',
+        vlineTextcolor:'',
+        vlineChatcolor:'',
         insertGroup:[],
         allGroupLine:[],
       dialogDelete: false,
@@ -181,21 +183,21 @@ const APIURL = "http://127.0.0.1:3000";
       saveData:[],
       dialogInsert: false,
       headers: [
-        {
-          text: 'ลำดับ',
-          align: 'start',
-          sortable: false,
-          value: 'groupline_id',
-        },
-        { text: 'ชื่อไลน์', value: 'groupline_name' },
-        { text: 'Line@ID ', value: 'groupline_lineid' },
-        { text: 'Ch.Secret', value: 'groupline_secret' },
-        { text: 'Ch.Access Token', value: 'groupline_token', },
-         { text: 'Rich Menu A', value: 'groupline_rich_menu_a' },
-          { text: 'Rich Menu B', value: 'groupline_rich_menu_b' },
+        // {
+        //   text: 'ลำดับ',
+        //   align: 'start',
+        //   sortable: false,
+        //   value: 'groupline_id',
+        // },
+        { text: 'ชื่อไลน์', value: 'groupLine_name' },
+        { text: 'Line@ID ', value: 'groupLine_LineId' },
+        { text: 'Ch.Secret', value: 'groupLine_secret' },
+        { text: 'Ch.Access Token', value: 'groupLine_token', },
+         { text: 'Rich Menu A', value: 'groupLine_richMenuA' },
+          { text: 'Rich Menu B', value: 'groupLine_richMenuB' },
            { text: 'url', value: 'url' },
-            { text: 'สีแชท', value: 'groupline_textcolor' },
-             { text: 'สีชื่อ', value: 'groupline_chatcolor' },
+            { text: 'สีแชท', value: 'groupLine_chatcolor' },
+             { text: 'สีชื่อ', value: 'groupLine_textcolor' },
              { text: 'Actions', value: 'actions', sortable: false }
       ],
     }),
@@ -225,57 +227,75 @@ const APIURL = "http://127.0.0.1:3000";
 
     methods: {
         getAllGroupLine(){
-                 axios.get(APIURL+'/getAllGroupLine').then((response)=>{
-                        this.allGroupLine=response.data
-                    console.log('testtest',this.allGroupLine)
-              })
+              //    axios.get(APIURL+'/getAllGroupLine').then((response)=>{
+              //           this.allGroupLine=response.data
+              //       console.log('testtest',this.allGroupLine)
+              // })
+              db.collection("groupLine").where('active','==',1).orderBy('createdAt').onSnapshot((querySnapshot) => {
+                  let data=[];
+                //   let alldata=[]
+                  querySnapshot.forEach((doc) => {
+                      // data.push(doc.data())
+                      data.push({
+                        'indexKey':doc.id,
+                        'groupLine_name':doc.data().groupLine_name,
+                        'groupLine_LineId': doc.data().groupLine_LineId,
+                        'groupLine_secret': doc.data().groupLine_secret,
+                        'groupLine_token': doc.data().groupLine_token,
+                        'groupLine_richMenuA':doc.data().groupLine_richMenuA,
+                        'groupLine_richMenuB': doc.data().groupLine_richMenuB,
+                        'url': doc.data().url,
+                        'groupLine_textcolor': doc.data().groupLine_textcolor,
+                        'groupLine_chatcolor':doc.data().groupLine_chatcolor,
+                        'groupLine_itf_auth': doc.data().groupLine_itf_auth,
+                        'groupLine_url': doc.data().groupLine_url,
+                        's_token': doc.data().s_token,
+                        'createdAt':doc.data().createdAt,
+                        'active': doc.data().active
+                        
+                      })
+                  })
+                   this.allGroupLine=data;
+                   console.log('test alldata = ', this.allGroupLine)
+                  // console.log('this.data=',data);
+                 
+              });
+
             },
         checkData(test1){
           console.log('test1 = ',test1)
         },
-        saveGroupLine(){
-            var data = []
-            data.push({
-           groupline_name : this.vlineName ,
-           groupline_lineid : this.vlineId,
-           groupline_secret : this.vlineSecret,
-           groupline_token : this.vlineAccessToken,
-           groupline_rich_menu_a : this.vlineRichMenuA,
-           groupline_rich_menu_b : this.vlineRichMenuB,
-           url : this.vurl,
-           groupline_textcolor : this.vlineTextcolor,
-           groupline_chatcolor : this.vlineChatcolor,
-           groupline_itf_auth : '',
-           groupline_url : '',
-           s_token : ''
-
-          })
-          console.log('test inser user = ', data)
-          axios.post(APIURL+'/setGroupLine',data[0]).then((response)=>{
-          //           console.log('testtest',this.allUser)
-                      this.dialogInsert = false
-                      this.saveData = []
-                      this.vlineName= ""
-                      this.vlineId=""
-                      this.vlineSecret= ""
-                      this.vlineAccessToken= ""
-                      this.vlineRichMenuA=""
-                      this.vlineRichMenuB= ""
-                      this.vurl= ""
-                      this.vlineTextcolor=""
-                      this.vlineChatcolor= ""
-                      this.editVlineTextcolor=""
-                      this.editVlineChatcolor=""
-                      this.successSnackbar=true
-                      this.getAllGroupLine()
-             })
-                     
+        testSave(){
+          
         },
-        getAllUser(){
-             axios.get(APIURL+'/getAllUser').then((response)=>{
-                        this.allUser=response.data
-                    console.log('testtest',this.allUser)
-             })
+        saveGroupLine(){
+          console.log('vlineTextcolor = ', this.vlineTextcolor)
+          console.log('vlineChatcolor = ', this.vlineChatcolor)
+          db.collection('groupLine').add({
+
+                    groupLine_name : this.vlineName ,
+                    groupLine_LineId : this.vlineId,
+                    groupLine_secret : this.vlineSecret,
+                    groupLine_token : this.vlineAccessToken,
+                    groupLine_richMenuA : this.vlineRichMenuA,
+                    groupLine_richMenuB : this.vlineRichMenuB,
+                    url : this.vurl,
+                    groupLine_textcolor : this.vlineTextcolor,
+                    groupLine_chatcolor : this.vlineChatcolor,
+                    groupLine_itf_auth : '',
+                    groupLine_url : '',
+                    s_token : '',
+                    createdAt : (new Date().toLocaleString("tr-TR", { timeZone: "UTC" })),
+                    active : 1
+
+
+                }).then(()=>{
+                  this.successSnackbar = true
+                  this.dialogInsert = false
+                })
+                this.getAllGroupLine()
+
+
         },
         openDialogInsert(){
                         
@@ -300,68 +320,71 @@ const APIURL = "http://127.0.0.1:3000";
         // this.vuser= item.username
         // this.vpassword=item.password
         // this.vpermission= item.user_group
-        console.log('item = ',item)
-        console.log('item groupline_textcolor = ', item.groupline_textcolor)
-        console.log('item groupline_chatcolor= ', item.groupline_chatcolor)
-        this.vId = item.groupline_id
-        this.vlineId = item.groupline_lineid
-        this.vlineSecret = item.groupline_secret 
-        this.vlineAccessToken = item.groupline_token 
-        this.vlineRichMenuA = item.groupline_rich_menu_a 
-        this.vlineRichMenuB = item.groupline_rich_menu_b 
+        console.log('Edit item = ',item)
+        // console.log('item groupline_textcolor = ', item.groupline_textcolor)
+        // console.log('item groupline_chatcolor= ', item.groupline_chatcolor)
+        this.indexKey = item.indexKey
+        this.vlineId = item.groupLine_LineId
+        this.vlineName = item.groupLine_name
+        this.vlineSecret = item.groupLine_secret 
+        this.vlineAccessToken = item.groupLine_token 
+        this.vlineRichMenuA = item.groupLine_richMenuA 
+        this.vlineRichMenuB = item.groupLine_richMenuB 
         this.vurl = item.url 
-        this.vlineTextcolor = item.groupline_textcolor 
-        this.vlineChatcolor = item.groupline_chatcolor 
+        this.vlineTextcolor = item.groupLine_textcolor 
+        this.vlineChatcolor = item.groupLine_chatcolor 
         this.dialogEdit = true
+
+
 
       },
       saveEditGroup(){
-          
-        var data=[];
-        data.push({
-        groupline_id    : this.vId,
-      groupline_lineid  :  this.vlineId,
-      groupline_secret : this.vlineSecret,
-      groupline_token : this.vlineAccessToken,
-      groupline_rich_menu_a : this.vlineRichMenuA,
-      groupline_rich_menu_b : this.vlineRichMenuB,
-      url : this.vurl,
-      groupline_textcolor : this.editVlineTextcolor.hex,
-      groupline_chatcolor : this.editVlineChatcolor.hex,
-        })
-        axios.post(APIURL+'/updateGroupLine',data[0]).then((response)=>{
-                    // console.log('testtest',this.allUser)
-                      this.dialogEdit = false
-                      this.successSnackbar=true
-                      this.vlineName= ""
-                      this.vlineId=""
-                      this.vlineSecret= ""
-                      this.vlineAccessToken= ""
-                      this.vlineRichMenuA=""
-                      this.vlineRichMenuB= ""
-                      this.vurl= ""
-                      this.vlineTextcolor=""
-                      this.vlineChatcolor= ""
-                      this.editVlineTextcolor=""
-                      this.editVlineChatcolor=""
-                      this.getAllGroupLine()
-                      console.log('success')
-             })
+
+        db.collection("groupLine").doc(this.indexKey).update({
+        
+        groupLine_LineId    : this.vlineId,
+        groupLine_name      : this.vlineName,
+        groupLine_secret    : this.vlineSecret,
+        groupLine_token     : this.vlineAccessToken,
+        groupLine_richMenuA : this.vlineRichMenuA,
+        groupLine_richMenuB : this.vlineRichMenuB,
+        groupLine_textcolor : this.editVlineTextcolor,
+        groupLine_chatcolor : this.editVlineChatcolor
+                })
+                this.dialogEdit = false
+                this.successSnackbar = true
+                this.vlineName= ""
+                this.vlineId=""
+                this.vlineSecret= ""
+                this.vlineAccessToken= ""
+                this.vlineRichMenuA=""
+                this.vlineRichMenuB= ""
+                this.vurl= ""
+                this.vlineTextcolor=""
+                this.vlineChatcolor= ""
+                this.editVlineTextcolor=""
+                this.editVlineChatcolor=""
       },
       deleteItem (item) {
-        this.vId = item.groupline_id
-        this.vlineName = item.groupline_name
+        console.log('test data = ', item)
+        this.indexKey = item.indexKey
+        this.vlineName = item.groupLine_name
         this.dialogDelete = true
       },
       deleteItemConfirm () {
-        axios.post(APIURL+'/deleteGroupLine',{groupline_id : this.vId}).then((response)=>{
-                      this.dialogDelete = false
-                      this.vId = ""
-                      this.vlineId = ""
+         db.collection("groupLine").doc(this.indexKey).update({
+           active : 0
+         })
+         this.dialogDelete = false
+         this.successSnackbar=true
+        // axios.post(APIURL+'/deleteGroupLine',{groupline_id : this.vId}).then((response)=>{
+        //               this.dialogDelete = false
+        //               this.vId = ""
+        //               this.vlineId = ""
 
-                      this.successSnackbar=true
-                      this.getAllGroupLine()
-             })
+        //               this.successSnackbar=true
+        //               this.getAllGroupLine()
+        //      })
       }
     }
   }

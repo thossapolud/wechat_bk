@@ -1,6 +1,7 @@
 <template>
+<v-app>
     <div>
-            <div class="messaging">
+      <div class="messaging">
       <div class="inbox_msg">
         <div class="inbox_people">
           <div class="headind_srch">
@@ -28,28 +29,27 @@
             </div> -->
           <div v-for="item in arrayReceiverlineUserId" :key="item.index" class="chat_list">
               <div v-if="item !== senderlineUserId" class="chat_people">
-                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+             
+                <div class="chat_img"> <img src="https://sprofile.line-scdn.net/0hXTJ4UYz6B3tnTRET_QF5BBcdBBFEPF5pHitAFABMCUpafxMkTC5MT1EaDE4IeRUkQilOFQVFDUJrXnAdeRv7T2B9WUxeeUUoQixMmA" alt="sunil"> </div>
                 <div class="chat_ib" @click="fetchLineMessagesByUser(item)">
                   <h5 >{{item}}<span class="chat_date">Dec 25</span></h5>
                   <p >Test, which is a new approach to have all solutions 
                     astrology under one roof.</p>
+                    <v-btn @click="openNote(item)">Note</v-btn>
                 </div>
+                 
               </div>
             </div>
-    
           </div>
         </div>
-
         <div class="mesgs">
           <div class="msg_history">
-
             <div v-for="item in messageByUser" :key="item.index" class="incoming_msg">
-
               <div :class="[item.lineAdId!==senderlineUserId?'sent_msg':'received_msg']">
                 <div class="received_withd_msg">
-                  <!-- <p>{{item.message}}</p> -->
+                  <p>{{item.message}}</p> 
                   <br>
-                  <p v-if="item.type!='out'">{{item.message}}</p>
+                  <!-- <p v-if="item.type!='out'">{{item.message}}</p>
                   <br v-if="item.type =='out'">
                   <p v-if="item.type =='out'" 
                   style="background: #00c300 none repeat scroll 0 0;
@@ -61,7 +61,7 @@
                   float: right;
                   padding: 30px 15px 0 25px;
                   width: 60%;">{{item.message}}</p>
-                  <br>
+                  <br> -->
                   <!--<span class="time_date"> {{item.author}}</span>-->
                   <!--<span class="time_date">user line {{item.vreply_line_userID}}</span> -->
                 </div>
@@ -80,16 +80,46 @@
       </div>
     </div>
     </div>
+    <v-dialog v-model="dialogNote" max-width="500px" persistent>
+    <v-container>
+    <v-row>
+          <v-col cols="12" >
+        <v-textarea outlined label="Outlined textarea"  :value="noteMessage" v-model="noteMessage"></v-textarea>
+      <v-col cols="12" md="3">
+      <v-btn @click="saveNote(noteMessage)">save</v-btn>
+      </v-col>
+      <v-col cols="12" md="3">
+      <v-btn @click="cancelNote()">cancel</v-btn>
+      </v-col>
+      </v-col>
+      </v-row>
+      </v-container>
+      </v-dialog>
+      <v-snackbar v-model="snackbar" >
+      บันทึกเรียบร้อย
+      <template v-slot:action="{ attrs }">
+        <v-btn color="pink" text v-bind="attrs" @click="snackbar = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
+      
+    </v-app>
 </template>
 
 <script>
     import firebase from 'firebase'
     const axios = require("axios");
     const APIURL = "http://127.0.0.1:3000";
+    
     export default {
         name: 'PrivateChat',
         data() {
             return {
+                snackbar:false,
+                noteMessage: '',
+                vlineUserId: '',
+                dialogNote: false,
                 message: '',
                 messages: [],
                 messageByUser: [],
@@ -100,9 +130,41 @@
                 arrayReceiverLastTime : [],
                 lastReplyToken:'',
                 // senderlineUserId : ''
-                senderlineUserId:'U42a494c80f5dcdb13017efdf252be7e3'
+                senderlineUserId:'U42a494c80f5dcdb13017efdf252be7e3',
+                userWeb : 'admin'
             }
         },methods: {
+            cancelNote(){
+              this.dialogNote = false
+            },
+            saveNote(){
+              console.log('message note =',this.noteMessage)
+
+              db.collection('chatNote').add({
+                    lineUserId : this.vlineUserId,
+                   noteMessage : this.noteMessage,
+                     createdAt : (new Date().toLocaleString("tr-TR", { timeZone: "UTC" }))
+                }).then(()=>{
+                  this.snackbar = true
+                  this.dialogNote = false
+                })
+            },
+            openNote(lineUserId){
+              this.vlineUserId = lineUserId
+              this.dialogNote = true
+              console.log('Note == ',lineUserId)
+
+              db.collection("chatNote").where('lineUserId','==',lineUserId).onSnapshot((querySnapshot) => {
+                  // db.collection("chat").where('author','==',user).orderBy('createdAt').onSnapshot((querySnapshot) => {
+                  let vnoteMessage=[];
+                  querySnapshot.forEach((doc) => {
+                      vnoteMessage.push(doc.data())
+                  })
+                   this.noteMessage=vnoteMessage[0].noteMessage;
+                  // console.log('this.messages=',this.noteMessage);
+                 
+              });
+            },
             scrollToBottom(){
               let box=document.querySelector('.msg_history');
               box.scrollTop=box.scrollHeight;
@@ -116,7 +178,7 @@
                 }).then(()=>{
                   this.scrollToBottom();
                 })
-                console.log('test = ', this.message)
+                // console.log('test = ', this.message)
                 this.message = null
 
                 setTimeout(()=>{
@@ -124,8 +186,7 @@
                 },1000);
             },
             sendMessage(){
-              console.log('testttttt ===',this.receiverlineUserId)
-              axios.post(APIURL+'/reply',{  
+              axios.post(APIURL+'/reply',{  // ตอบกลับไปยังไลน์
                                             "reply_token" : '',
                                             "message" : this.message,
                                             "lineUserId" : this.receiverlineUserId,
@@ -134,12 +195,9 @@
                                             "lineAdId" : this.senderlineUserId,
                                             "type" : 'out',
                                             "read" : 1,
-                                            "createdAt" : new Date()
+                                            "createdAt" : (new Date().toLocaleString("tr-TR", { timeZone: "UTC" }))
                                             }).then((response)=>{
-                console.log('test=',response.data)
-                console.log('url',APIURL)
               })
-
               this.message = null
               setTimeout(()=>{
                   this.scrollToBottom();
@@ -153,35 +211,69 @@
                       allMessages.push(doc.data())
                   })
                   this.messages=allMessages;
-                  console.log('this.messages=',this.messages);
+                  // console.log('this.messages=',this.messages);
               });
             },
-            fetchLineUserIdRecent(){
-              db.collection("lineMessage").onSnapshot((querySnapshot)=>{
-                let data=[];
-                let varrayReceiverlineUserId = [];
+            fetchLineUserIdRecent(){ //ดึงข้อมูลโปรไฟล์ User
+                let dataRowline = []
+                let groupLine = []
+                let recent = []
+                let profile = []
+             db.collection("responsible").where('user','==',this.userWeb).onSnapshot((querySnapshot)=>{ //Check การผูก User และ Group
                 querySnapshot.forEach((doc)=>{   
-                    data.push(doc.data())
-                    varrayReceiverlineUserId.push(doc.data().lineUserId)
+                  this.arrayReceiverlineUserId.push(doc.data())
                 })
+                 for (let index = 0; index < this.arrayReceiverlineUserId.length; index++) {
+                   let groupLine_UserId
+                  //  console.log('arrayReceiverlineUserId= ', this.arrayReceiverlineUserId[index].groupLine_UserId)
+                  // groupLine_UserId = this.arrayReceiverlineUserId[index].groupLine_UserId
+                  // db.collection('groupLine').where('groupLine_LineId','=',groupLine_UserId).onSnapshot((querySnapshot)=>{
+                  //   this.arrayReceiverlineUserId[index].push({groupLine : doc.data()})
+                  // })
+                }
+                })
+                console.log('test ==', this.arrayReceiverlineUserId)
 
-                this.arrayReceiverlineUserId = new Set(varrayReceiverlineUserId)
-                // this.arrayReceiverlineUserId = new Set(varrayReceiverlineUserId)
-                console.log('tetst------',new Set(varrayReceiverlineUserId));
+             
+                  // console.log('responsible = ',dataRowline.length)
+              //     for (let index = 0; index < dataRowline.length; index++) {
+              //     // const element = dataGroupline[index]
+              //     groupLine.push(dataRowline[index])
+
+              // db.collection("memberLineGroup").where('lineAdId','==',dataRowline[index].groupLine_UserId).onSnapshot((querySnapshot)=>{
+              //       let data=[];
+              //       querySnapshot.forEach((doc)=>{   
+              //       recent.push(doc.data())
+              //   })
+              //   })
+              //   }
+                //  console.log('test log = ',recent)
               
-              })
-              
+                
+                
+
+                /////////// Get Profile
+
+                     // db.collection('groupLine').where('groupLine_LineId','=',Recent.lineAdId).onSnapshot((querySnapshot)=>{
+                //     let data=[];
+                //     querySnapshot.forEach((doc)=>{   
+                //     Recent.push(doc.data())
+                // })
+                // })
+                
+
+                // this.arrayReceiverlineUserId = Recent
+                // console.log('arrayReceiverlineUserId = ', this.arrayReceiverlineUserId)              
             },
             fetchLineMessagesByUser(lineUserId){
               this.receiverlineUserId = lineUserId
-
-              console.log('test line user id = ', this.receiverlineUserId);
-              db.collection("lineMessage").where('lineUserId','==',lineUserId).orderBy("createdAt" , 'asc').onSnapshot((querySnapshot)=>{
-                let Msg=[];
+              // console.log('test line user id = ', this.receiverlineUserId);
+              db.collection("lineMessage").where('lineUserId','==',lineUserId).orderBy('createdAt').onSnapshot((querySnapshot)=>{
+                let Msg = [];
                 querySnapshot.forEach((doc) => {
-                      this.messageByUser.push(doc.data())
+                      Msg.push(doc.data())
                   })
-                  // this.messageByUser=Msg
+                  this.messageByUser=Msg
               })
               console.log('test data ',this.messageByUser)
               // console.log('test data ',this.messageByUser.sort())

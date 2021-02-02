@@ -105,6 +105,7 @@ const axios = require("axios");
 const APIURL = "http://127.0.0.1:3000";
   export default {
     data: () => ({
+      indexKey:'',
       dialogDelete: false,
       dialogEdit: false,
       successSnackbar: false,
@@ -119,16 +120,10 @@ const APIURL = "http://127.0.0.1:3000";
       dialogInsert: false,
       dialogDelete: false,
       headers: [
-        {
-          text: 'UserID',
-          align: 'start',
-          sortable: false,
-          value: 'user_id',
-        },
-        { text: 'User name', value: 'username' },
+        { text: 'User name', value: 'user' ,align: 'start',},
         { text: 'Password', value: 'password' },
-        { text: 'permission ', value: 'user_group' },
-        { text: 'วันที่สร้าง', value: 'create_date' },
+        { text: 'permission ', value: 'permissaion' },
+        { text: 'วันที่สร้าง', value: 'createdAt' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
     }),
@@ -140,12 +135,12 @@ const APIURL = "http://127.0.0.1:3000";
     },
 
     watch: {
-      dialog (val) {
-        val || this.close()
-      },
-      dialogDelete (val) {
-        val || this.closeDelete()
-      },
+      // dialog (val) {
+      //   val || this.close()
+      // },
+      // dialogDelete (val) {
+      //   val || this.closeDelete()
+      // },
       loader () {
             const l = this.loader
             this[l] = !this[l]
@@ -164,75 +159,128 @@ const APIURL = "http://127.0.0.1:3000";
           console.log('test1 = ',test1)
         },
         insertUser(user,password,permissaion){
-          this.saveData.push({
-            username : user,
-            password : password,
-            user_group : permissaion
-          })
-          console.log('test inser user = ', this.saveData)
-          axios.post(APIURL+'/insertUser',this.saveData[0]).then((response)=>{
-          //           console.log('testtest',this.allUser)
-                      this.dialogInsert = false
-                      this.saveData = []
-                      this.vuser= ""
-                      this.vpassword=""
-                      this.vpermission= ""
-                      this.successSnackbar=true
-                      this.getAllUser()
-             })
+          db.collection('userWebsite').add({
+                    user : user,
+                   password : password,
+                   permissaion : permissaion,
+                     createdAt : (new Date().toLocaleString("tr-TR", { timeZone: "UTC" })),
+                     active : 1
+                }).then(()=>{
+                  this.vuser= ""
+                  this.vpassword=""
+                  this.vpermission= ""
+                  this.dialogInsert = false
+                  this.successSnackbar = true
+                  this.getAllUser()
+                })
+
+          // this.saveData.push({
+          //   username : user,
+          //   password : password,
+          //   user_group : permissaion
+          // })
+          // console.log('test inser user = ', this.saveData)
+          // axios.post(APIURL+'/insertUser',this.saveData[0]).then((response)=>{
+          // //           console.log('testtest',this.allUser)
+          //             this.dialogInsert = false
+          //             this.saveData = []
+          //             this.vuser= ""
+          //             this.vpassword=""
+          //             this.vpermission= ""
+          //             this.successSnackbar=true
+          //             this.getAllUser()
+          //    })
                      
         },
         getAllUser(){
-             axios.get(APIURL+'/getAllUser').then((response)=>{
-                        this.allUser=response.data
-                    console.log('testtest',this.allUser)
-             })
+           db.collection("userWebsite").where('active','==',1).orderBy('createdAt').onSnapshot((querySnapshot) => {
+                  // db.collection("chat").where('author','==',user).orderBy('createdAt').onSnapshot((querySnapshot) => {
+                  let data=[];
+                  // let alldata=[]
+                  querySnapshot.forEach((doc) => {
+                      // alldata.push(doc.data())
+                      data.push({
+                        'indexKey':doc.id,
+                        'user': doc.data().user,
+                        'password': doc.data().password,
+                        'permissaion': doc.data().permissaion,
+                        'createdAt': doc.data().createdAt
+                      })
+                  })
+                   this.allUser=data;
+                   console.log('test alldata = ', this.allUser)
+                  // console.log('this.messages=',this.allTag);
+                 
+              });
+            //  axios.get(APIURL+'/getAllUser').then((response)=>{
+            //             this.allUser=response.data
+            //         console.log('testtest',this.allUser)
+            //  })
         },
       editUser(item){
+        // console.log('item = ', item)
         this.dialogEdit = true
-        this.vuserID = item.user_id
-        this.vuser= item.username
+        this.vuser= item.user
         this.vpassword=item.password
-        this.vpermission= item.user_group
+        this.vpermission= item.permissaion
+        this.indexKey = item.indexKey
 
       },
       saveEditUser(){
-        var data=[];
-        data.push({
-          user_id : this.vuserID,
-          password : this.vpassword
-        })
+        // console.log('test index key = ', this.user)
+        db.collection("userWebsite").doc(this.indexKey).update({
+                    user: this.vuser,
+                    password : this.vpassword
+                })
+                this.dialogEdit = false
+                this.successSnackbar = true
 
-        // console.log('test ==== ', data)
-        axios.post(APIURL+'/updatePasswordUser',data[0]).then((response)=>{
-                    console.log('testtest',this.allUser)
-                      this.dialogEdit = false
-                      this.vuserID = ""
-                      this.vuser= ""
-                      this.vpassword=""
-                      this.vpermission= ""
-                      this.successSnackbar=true
-                      this.getAllUser()
-             })
+        // var data=[];
+        // data.push({
+        //   user_id : this.vuserID,
+        //   password : this.vpassword
+        // })
+
+        // // console.log('test ==== ', data)
+        // axios.post(APIURL+'/updatePasswordUser',data[0]).then((response)=>{
+        //             console.log('testtest',this.allUser)
+        //               this.dialogEdit = false
+        //               this.vuserID = ""
+        //               this.vuser= ""
+        //               this.vpassword=""
+        //               this.vpermission= ""
+        //               this.successSnackbar=true
+        //               this.getAllUser()
+        //      })
         
       },
       deleteItem (item) {
-        this.vuserID = item.user_id,
-        this.vuser = item.username
+        this.indexKey = item.indexKey,
+        this.vuser = item.user
         this.dialogDelete = true
       },
 
       deleteItemConfirm () {
-        axios.post(APIURL+'/deleteUser',{userId : this.vuserID}).then((response)=>{
-                    console.log('testtest',this.allUser)
-                      this.dialogDelete = false
-                      this.vuserID = ""
+        db.collection("userWebsite").doc(this.indexKey).update({
+                    active: 0
+                })
+                      this.indexKey = ""
                       this.vuser= ""
                       this.vpassword=""
                       this.vpermission= ""
+                      this.dialogDelete = false
                       this.successSnackbar=true
                       this.getAllUser()
-             })
+        // axios.post(APIURL+'/deleteUser',{userId : this.vuserID}).then((response)=>{
+        //             console.log('testtest',this.allUser)
+        //               this.dialogDelete = false
+        //               this.vuserID = ""
+        //               this.vuser= ""
+        //               this.vpassword=""
+        //               this.vpermission= ""
+        //               this.successSnackbar=true
+        //               this.getAllUser()
+        //      })
       },
       // save () {
       //   if (this.editedIndex > -1) {

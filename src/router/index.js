@@ -8,6 +8,8 @@ import GroupLineList  from '../views/groupLineList.vue'
 import GroupLineListDev from '../views/groupLineListDev.vue'
 import UserManage from '../views/userManage.vue'
 import Responsible from '../views/responsible.vue'
+import TagManage from  '../views/tagManage.vue'
+import Broadcast from '../views/broadcast.vue'
 
 
 Vue.use(VueRouter)
@@ -48,6 +50,16 @@ const routes = [
     path: '/responsible',
     name: 'Responsible',
     component: Responsible
+  },
+  {
+    path: '/tagmanage',
+    name: 'TagManage',
+    component: TagManage
+  },
+  {
+    path: '/broadcast',
+    name: 'Broadcast',
+    component: Broadcast
   },
   {
     path: '/about',

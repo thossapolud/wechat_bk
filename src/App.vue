@@ -6,6 +6,8 @@
       <router-link to="/groupLineListDev">Group Line List</router-link>|
       <router-link to="/userManage">User Manage</router-link>|
       <router-link to="/responsible">Responsible</router-link>|
+      <router-link to="/tagmanage">TagManage</router-link>|
+      <router-link to="/broadcast">broadcast</router-link>|
       <router-link to="/">Chat</router-link> |
     </div>
     <router-view/>
