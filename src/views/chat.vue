@@ -1,6 +1,6 @@
 <template>
     <v-app>
-        <div class="messaging">
+        <div>
         </div>
     </v-app>
 </template>

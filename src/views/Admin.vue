@@ -1,7 +1,7 @@
 <template>
     <div>
     this is Admin Page
-    <div class="admin">
+    <div>
     </div>
     </div>
 </template>

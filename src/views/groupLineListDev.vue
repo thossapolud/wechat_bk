@@ -47,7 +47,10 @@
                 <v-text-field label="ชื่อไลน์*" type="username" v-model="vlineName " required></v-text-field>
               </v-col>
               <v-col cols="12" sm="6">
-                <v-text-field label="Line@ID*" type="username" v-model="vlineId " required></v-text-field>
+                <v-text-field label="Line@ID*" type="username" v-model="vlineAtID " required></v-text-field>
+              </v-col>
+              <v-col cols="12" sm="6">
+                <v-text-field label="LineUserID*" type="username" v-model="vlineId " required disabled></v-text-field>
               </v-col>
               <v-col cols="12" sm="6">
                 <v-text-field label="Ch.Secret*" type="username" v-model="vlineSecret " required></v-text-field>
@@ -74,10 +77,11 @@
                 <v-color-picker disabled hide-canvas hide-inputs hide-mode-switch hide-sliders mode="hexa" show-swatches swatches-max-height="100" v-model="vlineChatcolor" ></v-color-picker>
               </v-col>
               <v-col cols="12" sm="6" >
-                <v-btn v-if="vlineName!=='' & vlineId!== '' & vlineAccessToken!== ''" :loading="loading3" :disabled="loading3" color="blue-grey" class="ma-2 white--text" @click="loader = 'loading3' , saveGroupLine() "> SAVE <v-icon right dark>mdi-cloud-upload</v-icon></v-btn>
+                <v-btn v-if="vlineName!=='' & vlineAtID!== '' & vlineAccessToken!== ''" :loading="loading3" :disabled="loading3" color="blue-grey" class="ma-2 white--text" @click="loader = 'loading3' , saveGroupLine() "> SAVE <v-icon right dark>mdi-cloud-upload</v-icon></v-btn>
                 <!-- <v-autocomplete :items="['Skiing', 'Ice hockey', 'Soccer', 'Basketball', 'Hockey', 'Reading', 'Writing', 'Coding', 'Basejump']" label="Interests" multiple></v-autocomplete> -->
                 <!-- <v-btn></v-btn> -->
               </v-col>
+              <P>**หลังจากการกด Save กรุณาส่งข้อความโดยระบุชื่อของ Line AO เพื่อทำการรับ Userline ID**</p>
             </v-row>
           </v-container>
         </v-card-text>
@@ -95,7 +99,10 @@
                 <v-text-field label="ชื่อไลน์*" type="username" v-model="vlineName " required></v-text-field>
               </v-col>
               <v-col cols="12" sm="6">
-                <v-text-field label="Line@ID*" type="username" v-model="vlineId " required></v-text-field>
+                <v-text-field label="Line@ID*" type="username" v-model="vlineAtID" required></v-text-field>
+              </v-col>
+              <v-col cols="12" sm="6">
+                <v-text-field label="LineUserID*" type="username" v-model="vlineId " required disabled></v-text-field>
               </v-col>
               <v-col cols="12" sm="6">
                 <v-text-field label="Ch.Secret*" type="username" v-model="vlineSecret " required></v-text-field>
@@ -157,12 +164,14 @@
 
 <script>
 const axios = require("axios");
-const APIURL = "http://127.0.0.1:3000";
+// const APIURL = "http://127.0.0.1:3000";
+const APIURL = "https://wechatbackend.herokuapp.com"
   export default {
     data: () => ({
         indexKey:'',
         editVlineTextcolor:'',
         editVlineChatcolor:'',
+        vlineAtID: '',
         vurl:'',
         vlineAccessToken:'',
         vId:'',
@@ -173,7 +182,7 @@ const APIURL = "http://127.0.0.1:3000";
         vlineSecret:'',
         vlineTextcolor:'',
         vlineChatcolor:'',
-        insertGroup:[],
+        // insertGroup:[],
         allGroupLine:[],
       dialogDelete: false,
       dialogEdit: false,
@@ -190,7 +199,8 @@ const APIURL = "http://127.0.0.1:3000";
         //   value: 'groupline_id',
         // },
         { text: 'ชื่อไลน์', value: 'groupLine_name' },
-        { text: 'Line@ID ', value: 'groupLine_LineId' },
+        { text: 'Line@ID ', value: 'lineAtID' },
+        { text: 'LineUserID ', value: 'groupLine_LineId' },
         { text: 'Ch.Secret', value: 'groupLine_secret' },
         { text: 'Ch.Access Token', value: 'groupLine_token', },
          { text: 'Rich Menu A', value: 'groupLine_richMenuA' },
@@ -234,8 +244,10 @@ const APIURL = "http://127.0.0.1:3000";
               db.collection("groupLine").where('active','==',1).orderBy('createdAt').onSnapshot((querySnapshot) => {
                   let data=[];
                 //   let alldata=[]
+                  let val=[]
                   querySnapshot.forEach((doc) => {
                       // data.push(doc.data())
+                      val.push(doc)
                       data.push({
                         'indexKey':doc.id,
                         'groupLine_name':doc.data().groupLine_name,
@@ -251,13 +263,14 @@ const APIURL = "http://127.0.0.1:3000";
                         'groupLine_url': doc.data().groupLine_url,
                         's_token': doc.data().s_token,
                         'createdAt':doc.data().createdAt,
-                        'active': doc.data().active
+                        'active': doc.data().active,
+                        'lineAtID': doc.data().lineAtID
                         
                       })
                   })
                    this.allGroupLine=data;
-                   console.log('test alldata = ', this.allGroupLine)
-                  // console.log('this.data=',data);
+                   console.log('val = ', val)
+                  console.log('val =',val);
                  
               });
 
@@ -282,6 +295,7 @@ const APIURL = "http://127.0.0.1:3000";
                     url : this.vurl,
                     groupLine_textcolor : this.vlineTextcolor,
                     groupLine_chatcolor : this.vlineChatcolor,
+                    lineAtID :  this.vlineAtID,
                     groupLine_itf_auth : '',
                     groupLine_url : '',
                     s_token : '',
@@ -310,6 +324,7 @@ const APIURL = "http://127.0.0.1:3000";
                       this.vlineChatcolor= ""
                       this.editVlineTextcolor=""
                       this.editVlineChatcolor=""
+                      this.vlineAtID = ""
                       this.dialogInsert = true
 
         },
@@ -333,6 +348,7 @@ const APIURL = "http://127.0.0.1:3000";
         this.vurl = item.url 
         this.vlineTextcolor = item.groupLine_textcolor 
         this.vlineChatcolor = item.groupLine_chatcolor 
+        this.vlineAtID = item.lineAtID
         this.dialogEdit = true
 
 

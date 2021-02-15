@@ -1,7 +1,7 @@
 <template>
 <v-app>
     <div>
-      <div class="messaging">
+      <div>
       <div class="inbox_msg">
         <div class="inbox_people">
           <div class="headind_srch">
@@ -16,54 +16,88 @@
                 </span> </div>
             </div>
           </div>
-          <div class="inbox_chat">
-            <!-- <div class="chat_list active_chat">
-              <div class="chat_people">
-                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-                <div class="chat_ib">
-                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
-                  <p>Test, which is a new approach to have all solutions 
-                    astrology under one roof.</p>
-                </div>
-              </div>
-            </div> -->
-          <div v-for="item in arrayReceiverlineUserId" :key="item.index" class="chat_list">
-              <div v-if="item !== senderlineUserId" class="chat_people">
-             
-                <div class="chat_img"> <img src="https://sprofile.line-scdn.net/0hXTJ4UYz6B3tnTRET_QF5BBcdBBFEPF5pHitAFABMCUpafxMkTC5MT1EaDE4IeRUkQilOFQVFDUJrXnAdeRv7T2B9WUxeeUUoQixMmA" alt="sunil"> </div>
-                <div class="chat_ib" @click="fetchLineMessagesByUser(item)">
-                  <h5 >{{item}}<span class="chat_date">Dec 25</span></h5>
-                  <p >Test, which is a new approach to have all solutions 
-                    astrology under one roof.</p>
-                    <v-btn @click="openNote(item)">Note</v-btn>
-                </div>
-                 
+          <div class="inbox_chat" >
+
+            <v-list three-line>
+            <div v-for="(item, index) in profile" :key="index">
+              <div v-for="(itemmem, index) in item.member" :key="index">
+                <v-list-item
+                  :key="index"
+                  :style="{'background-color': item.groupLineBody.groupLine_chatcolor}"
+                  @click="fetchLineMessagesByUser(itemmem.bodymember.lineUserId,item.groupLineBody.groupLine_chatcolor), vAccessToken = item.groupLineBody.groupLine_token, vlineGroupUserId = item.groupLine_UserId"
+                >
+                <v-menu>
+                <template v-slot:activator="{ on: menu, attrs }">
+                  <v-btn v-bind="attrs" v-on="{ ...menu }">
+                    <v-icon>mdi-dialpad</v-icon>
+                  </v-btn>
+                </template>
+                <v-list>
+                <v-row>
+                <v-col>
+                  <v-list-item-title @click="openNote(itemmem.bodymember.note,itemmem.bodymember.lineUserId,itemmem.indexKey)">note</v-list-item-title>
+                </v-col>
+                </v-row>
+                <v-row>
+                <v-col>
+                  <v-list-item-title>add tag</v-list-item-title>
+                  </v-col>
+                </v-row>
+                <!-- <v-row>
+                <v-col>
+                  <v-list-item-title>1asdfghj</v-list-item-title>
+                  </v-col>
+                </v-row> -->
+              </v-list>
+                </v-menu>
+                  <v-row class="align-center">
+                    <v-col cols="3">
+                    <v-badge bordered bottom :color="item.groupLineBody.groupLine_textcolor" dot offset-x="10" offset-y="10">
+                      <v-avatar>
+                        <v-img :src="itemmem.proFile.pictureUrl"></v-img>
+                      </v-avatar>
+                      </v-badge>
+                    </v-col>
+                    <v-col cols="9">
+                      <v-row>
+                        <v-col cols="5" class="pb-0">
+                          <v-list-item-title :style="{ 'color': item.groupLineBody.groupLine_textcolor}">
+                            {{ itemmem.proFile.displayName }}
+                          </v-list-item-title>
+                        </v-col>
+                        <v-col cols="7" class="pb-0">
+                          <v-list-item-subtitle>
+                            Group Line {{ item.groupLine_name }}
+                          </v-list-item-subtitle>
+                          
+                        </v-col>
+                      </v-row>
+                      
+                      <v-row>
+                        <v-col cols="12" class="pb-0 text-start">
+                          <v-list-item-subtitle>
+                            test last message
+                          </v-list-item-subtitle>
+                        </v-col>
+                      </v-row>
+                    </v-col>
+                  </v-row>
+                </v-list-item>
+                <v-divider></v-divider>
               </div>
             </div>
+          </v-list> 
           </div>
         </div>
         <div class="mesgs">
           <div class="msg_history">
             <div v-for="item in messageByUser" :key="item.index" class="incoming_msg">
-              <div :class="[item.lineAdId!==senderlineUserId?'sent_msg':'received_msg']">
+              <!-- <div :class="[item.lineAdId!==senderlineUserId?'sent_msg':'received_msg']"> -->
+              <!-- <div :class="[item.type!=='in'?'sent_msg':'received_msg']"> -->
+              <div :class="[item.type!=='in'?'sent_msg':'received_msg']">
                 <div class="received_withd_msg">
-                  <p>{{item.message}}</p> 
+                  <p>{{item.message}}</p>
                   <br>
-                  <!-- <p v-if="item.type!='out'">{{item.message}}</p>
-                  <br v-if="item.type =='out'">
-                  <p v-if="item.type =='out'" 
-                  style="background: #00c300 none repeat scroll 0 0;
-                  border-radius: 3px;
-                  font-size: 14px;
-                  margin: 0; color:#fff;
-                  padding: 5px 10px 5px 12px;
-                  width:100%;
-                  float: right;
-                  padding: 30px 15px 0 25px;
-                  width: 60%;">{{item.message}}</p>
-                  <br> -->
-                  <!--<span class="time_date"> {{item.author}}</span>-->
-                  <!--<span class="time_date">user line {{item.vreply_line_userID}}</span> -->
                 </div>
               </div>
             </div>
@@ -80,11 +114,11 @@
       </div>
     </div>
     </div>
-    <v-dialog v-model="dialogNote" max-width="500px" persistent>
-    <v-container>
+    <v-dialog v-model="dialogNote" max-width="500px" persistent  >
+    <v-container >
     <v-row>
           <v-col cols="12" >
-        <v-textarea outlined label="Outlined textarea"  :value="noteMessage" v-model="noteMessage"></v-textarea>
+        <v-textarea outlined label="Outlined textarea"  :value="noteMessage" v-model="note" background-color="amber lighten-4"></v-textarea>
       <v-col cols="12" md="3">
       <v-btn @click="saveNote(noteMessage)">save</v-btn>
       </v-col>
@@ -108,14 +142,25 @@
 </template>
 
 <script>
-    import firebase from 'firebase'
+import firebase from 'firebase/app'
+import firestore from "firebase/firestore"
+import VueCookies from 'vue-cookies'
     const axios = require("axios");
-    const APIURL = "http://127.0.0.1:3000";
-    
+    // const APIURL = "http://127.0.0.1:8000";
+    const APIURL = "https://wechatbackend.herokuapp.com"
+    // axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+
     export default {
         name: 'PrivateChat',
         data() {
             return {
+
+                NoteindexKey:'',
+                note:'',
+                vreplyToken:'',
+                vAccessToken:'',
+                chatColor:'',
+                profile: [],
                 snackbar:false,
                 noteMessage: '',
                 vlineUserId: '',
@@ -123,76 +168,76 @@
                 message: '',
                 messages: [],
                 messageByUser: [],
-                authUser: {},
+                // authUser: {},
                 receiverlineUserId : '',
                 arrayReceiverlineUserId :[],
                 arrayReceiverlineMessage : [],
                 arrayReceiverLastTime : [],
                 lastReplyToken:'',
                 // senderlineUserId : ''
-                senderlineUserId:'U42a494c80f5dcdb13017efdf252be7e3',
-                userWeb : 'admin'
+                vlineGroupUserId:'',
+                // senderlineUserId:'U42a494c80f5dcdb13017efdf252be7e3',
+                userWeb : ''
             }
-        },methods: {
+        },
+        computed:{
+          
+        },
+        methods: {
             cancelNote(){
               this.dialogNote = false
             },
             saveNote(){
-              console.log('message note =',this.noteMessage)
+              console.log('message note =',this.note)
 
-              db.collection('chatNote').add({
-                    lineUserId : this.vlineUserId,
-                   noteMessage : this.noteMessage,
-                     createdAt : (new Date().toLocaleString("tr-TR", { timeZone: "UTC" }))
+                db.collection("memberLineGroup").doc(this.NoteindexKey).update({
+                    note : this.note
                 }).then(()=>{
                   this.snackbar = true
                   this.dialogNote = false
                 })
+                
             },
-            openNote(lineUserId){
-              this.vlineUserId = lineUserId
+            openNote(note,userID,indexKey){
+              console.log('userID = ', userID)
+              console.log('openNote = ', note)
+              console.log('indexKey = ', indexKey)
+              this.note = note
+              this.vlineUserId = userID
+              this.NoteindexKey = indexKey
+              // this.vlineUserId = lineUserId
               this.dialogNote = true
-              console.log('Note == ',lineUserId)
 
-              db.collection("chatNote").where('lineUserId','==',lineUserId).onSnapshot((querySnapshot) => {
-                  // db.collection("chat").where('author','==',user).orderBy('createdAt').onSnapshot((querySnapshot) => {
-                  let vnoteMessage=[];
-                  querySnapshot.forEach((doc) => {
-                      vnoteMessage.push(doc.data())
-                  })
-                   this.noteMessage=vnoteMessage[0].noteMessage;
-                  // console.log('this.messages=',this.noteMessage);
-                 
-              });
             },
             scrollToBottom(){
               let box=document.querySelector('.msg_history');
               box.scrollTop=box.scrollHeight;
             },
-            saveMessage(){ //ส่งข้อมูลไปยัง firebase
-                //save to firestore
-                db.collection('chat').add({
-                    message:this.message,
-                    author:this.authUser.displayName,
-                    createdAt: new Date()
-                }).then(()=>{
-                  this.scrollToBottom();
-                })
-                // console.log('test = ', this.message)
-                this.message = null
+            // saveMessage(){ //ส่งข้อมูลไปยัง firebase
+            //     //save to firestore
+            //     db.collection('chat').add({
+            //         message:this.message,
+            //         author:this.authUser.displayName,
+            //         createdAt: new Date()
+            //     }).then(()=>{
+            //       this.scrollToBottom();
+            //     })
+            //     // console.log('test = ', this.message)
+            //     this.message = null
 
-                setTimeout(()=>{
-                  this.scrollToBottom();
-                },1000);
-            },
+            //     setTimeout(()=>{
+            //       this.scrollToBottom();
+            //     },1000);
+            // },
             sendMessage(){
               axios.post(APIURL+'/reply',{  // ตอบกลับไปยังไลน์
-                                            "reply_token" : '',
+                                            "reply_token" : this.vreplyToken,
+                                            "accessToken" : this.vAccessToken,
                                             "message" : this.message,
                                             "lineUserId" : this.receiverlineUserId,
                                             "typeMessage" : 'text',
                                             "vmod" : 'active',
-                                            "lineAdId" : this.senderlineUserId,
+                                            "lineAdId" : this.vlineGroupUserId,
                                             "type" : 'out',
                                             "read" : 1,
                                             "createdAt" : (new Date().toLocaleString("tr-TR", { timeZone: "UTC" }))
@@ -214,102 +259,116 @@
                   // console.log('this.messages=',this.messages);
               });
             },
-            fetchLineUserIdRecent(){ //ดึงข้อมูลโปรไฟล์ User
-                let dataRowline = []
-                let groupLine = []
-                let recent = []
-                let profile = []
-             db.collection("responsible").where('user','==',this.userWeb).onSnapshot((querySnapshot)=>{ //Check การผูก User และ Group
-                querySnapshot.forEach((doc)=>{   
-                  this.arrayReceiverlineUserId.push(doc.data())
-                })
-                 for (let index = 0; index < this.arrayReceiverlineUserId.length; index++) {
-                   let groupLine_UserId
-                  //  console.log('arrayReceiverlineUserId= ', this.arrayReceiverlineUserId[index].groupLine_UserId)
-                  // groupLine_UserId = this.arrayReceiverlineUserId[index].groupLine_UserId
-                  // db.collection('groupLine').where('groupLine_LineId','=',groupLine_UserId).onSnapshot((querySnapshot)=>{
-                  //   this.arrayReceiverlineUserId[index].push({groupLine : doc.data()})
-                  // })
-                }
-                })
-                console.log('test ==', this.arrayReceiverlineUserId)
+            async fetchLineUserIdRecent(){ //ดึงข้อมูลโปรไฟล์ User
+            // let userWeb = req.body.userWeb
 
-             
-                  // console.log('responsible = ',dataRowline.length)
-              //     for (let index = 0; index < dataRowline.length; index++) {
-              //     // const element = dataGroupline[index]
-              //     groupLine.push(dataRowline[index])
+            let userWebdata =[]
 
-              // db.collection("memberLineGroup").where('lineAdId','==',dataRowline[index].groupLine_UserId).onSnapshot((querySnapshot)=>{
-              //       let data=[];
-              //       querySnapshot.forEach((doc)=>{   
-              //       recent.push(doc.data())
-              //   })
-              //   })
-              //   }
-                //  console.log('test log = ',recent)
+            const test = await db.collection("responsible").where('user','==',this.userWeb).get()
+            test.forEach(doc => {
               
-                
-                
+              if (doc.data().active === 1) {
+                userWebdata.push(doc.data())
+                console.log('test',userWebdata)
+              }
+            })
 
-                /////////// Get Profile
+            
+            for (let index = 0; index < userWebdata.length; index++) { //หา body ของ group line
+              
 
-                     // db.collection('groupLine').where('groupLine_LineId','=',Recent.lineAdId).onSnapshot((querySnapshot)=>{
-                //     let data=[];
-                //     querySnapshot.forEach((doc)=>{   
-                //     Recent.push(doc.data())
+              let response = await db.collection("groupLine").where('groupLine_LineId','==',userWebdata[index].groupLine_UserId).get()
+              response.forEach(doc => {
+                Object.assign(userWebdata[index], {'groupLineBody' : doc.data()})
+              })
+              
+              let response2 = await db.collection("memberLineGroup").where('lineAdId','==',userWebdata[index].groupLine_UserId).get()
+              
+              let member =[]
+              response2.forEach(doc => {
+                if(userWebdata[index].groupLine_UserId === doc.data().lineAdId && userWebdata[index].active === 1){
+                // console.log('data = ', doc.data())//body member
+                
+                  axios.post(APIURL+'/getProfile',{'lineUserId': doc.data().lineUserId,
+                                                  'lineToken': userWebdata[index].groupLineBody.groupLine_token} //
+                                            ).then((response)=>{
+                                              // console.log('response.data.profile = ',response.data.profile)
+                                              member.push({
+                                                            'indexKey': doc.id,
+                                                            'bodymember' : doc.data(),
+                                                            'proFile' : response.data.profile})                
                 // })
-                // })
-                
-
-                // this.arrayReceiverlineUserId = Recent
-                // console.log('arrayReceiverlineUserId = ', this.arrayReceiverlineUserId)              
+                })
+                Object.assign(userWebdata[index], {'member' : member})
+                }
+              })
+                console.log('userWebdata = ',userWebdata)
+              } 
+              this.profile =  userWebdata
+              
+              // console.log('response profile= ', this.profile )
+            // axios.post(APIURL+'/getProfile',userWebdata //
+            //                                 ).then((response)=>{
+            //                                   this.profile  = response.data                     
+            // })
             },
-            fetchLineMessagesByUser(lineUserId){
+            fetchLineMessagesByUser(lineUserId,color){
+            // console.log('vlineGroupId  = ', this.vlineGroupUserId)
+            // console.log('vAccessToken  = ', this.vAccessToken)
               this.receiverlineUserId = lineUserId
+              this.chatColor=color
               // console.log('test line user id = ', this.receiverlineUserId);
               db.collection("lineMessage").where('lineUserId','==',lineUserId).orderBy('createdAt').onSnapshot((querySnapshot)=>{
                 let Msg = [];
                 querySnapshot.forEach((doc) => {
                       Msg.push(doc.data())
+                      this.vreplyToken = doc.data().reply_token
                   })
                   this.messageByUser=Msg
+                  // this.vreplyToken=this.messageByUser.sort().reply_token
+                  // console.log('vreplyToken = ',this.vreplyToken)
               })
-              console.log('test data ',this.messageByUser)
-              // console.log('test data ',this.messageByUser.sort())
+              // console.log('test data ',this.messageByUser)
+              setTimeout(()=>{
+                  this.scrollToBottom();
+                },10);
             }
         },
         
         created() {
-          firebase.auth().onAuthStateChanged(user=>{
-            if(user){
-              this.authUser=user;
-            }else{
-              this.authUser={}
-            }
-          }
-          )
+          this.userWeb =  $cookies.get('user')
+          console.log('log ==', $cookies.get('user'))
+          this.fetchLineUserIdRecent()
+          // firebase.auth().onAuthStateChanged(user=>{
+          //   if(user){
+          //     this.authUser=user;
+          //   }else{
+          //     this.authUser={}
+          //   }
+          // }
+          // )
           this.fetchLineMessages();
           this.fetchLineUserIdRecent();
             // this.fetchMessages();
         },
         beforeRouteEnter (to, from, next) {
           next(vm=>{
-
-            firebase.auth().onAuthStateChanged(user=>{
-
-              if(user){
+          //   firebase.auth().onAuthStateChanged(user=>{
+              if(document.cookie){
                 next();
               }else{
-                vm.$router.push('/login')
+                vm.$router.push('/')
               }
-            })
+          //   })
           })
         }
     }
 </script>
 
 <style lang="scss" scoped>
+hr {
+  margin: 0px;
+}
 .container{max-width:1170px; margin:auto;}
 img{ max-width:100%;}
 .inbox_people {
@@ -379,9 +438,8 @@ img{ max-width:100%;}
 }
 .received_msg {
   display: inline-block;
-  padding: 0 0 0 10px;
-  vertical-align: top;
-  width: 92%;
+  width: 57%;
+  float: left;
  }
  .received_withd_msg p {
   background: #585858 none repeat scroll 0 0;
@@ -390,15 +448,10 @@ img{ max-width:100%;}
   font-size: 14px;
   margin: 0;
   padding: 5px 10px 5px 12px;
-  width: 100%;
 }
-.time_date {
-  color: #747474;
-  display: block;
-  font-size: 12px;
-  margin: 8px 0 0;
+.received_withd_msg {
+  overflow-x: hidden;
 }
-.received_withd_msg { width: 57%;}
 .mesgs {
   float: left;
   padding: 30px 15px 0 25px;
@@ -409,15 +462,11 @@ img{ max-width:100%;}
   background: #00c300 none repeat scroll 0 0;
   border-radius: 3px;
   font-size: 14px;
-  margin: 0; color:#fff;
-  padding: 5px 10px 5px 12px;
-  width:100%;
 }
 .outgoing_msg{ overflow:hidden; margin:26px 0 26px;}
 .sent_msg {
   float: right;
-  padding: 30px 15px 0 25px;
-  width: 60%;
+  width: 57%;
 }
 .input_msg_write input {
   background: rgba(0, 0, 0, 0) none repeat scroll 0 0;

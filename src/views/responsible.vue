@@ -103,7 +103,7 @@
 </template>
 
 <script>
-import firebase from 'firebase'
+// import firebase from 'firebase'
   export default {
     data: () => ({
         indexGroupLine:'',
@@ -164,6 +164,7 @@ import firebase from 'firebase'
 
         let username
         let lineGroupName
+        let lineGroupID
           // console.log('indexGroupLine === ', this.indexGroupLine)
           // console.log('indexUser === ', this.indexUser)
 
@@ -181,6 +182,7 @@ import firebase from 'firebase'
         // console.log('this.allUser[index] = ',this.allUser[index].indexKey)
         if(this.indexGroupLine ===  this.allGroupLine[index].indexKey){
           lineGroupName = this.allGroupLine[index].groupLine_name
+          lineGroupID = this.allGroupLine[index].groupLine_LineId
         }
         // this.arraySelectGroup.push(element)
           }
@@ -189,6 +191,7 @@ import firebase from 'firebase'
                     indexGroupLine : this.indexGroupLine,
                     groupLine_name : lineGroupName,
                     indexUser : this.indexUser,
+                    groupLine_UserId: lineGroupID,
                     user : username
                 })
                 this.dialogEdit = false
@@ -208,6 +211,7 @@ console.log('item = ', item)
       saveRow(){
         let username
         let lineGroupName
+        let lineGroupID
           // console.log('indexGroupLine === ', this.indexGroupLine)
           // console.log('indexUser === ', this.indexUser)
 
@@ -226,16 +230,18 @@ console.log('item = ', item)
         // console.log('this.allUser[index] = ',this.allUser[index].indexKey)
         if(this.indexGroupLine ===  this.allGroupLine[index].indexKey){
           lineGroupName = this.allGroupLine[index].groupLine_name
+          lineGroupID = this.allGroupLine[index].groupLine_LineId
         }
         // this.arraySelectGroup.push(element)
           }
-          console.log('user = ',lineGroupName)
+          console.log('user = ',lineGroupID)
 
           db.collection('responsible').add({
                     indexGroupLine : this.indexGroupLine,
                     groupLine_name : lineGroupName,
                     indexUser : this.indexUser,
                     user : username,
+                    groupLine_UserId : lineGroupID,
                      createdAt : (new Date().toLocaleString("tr-TR", { timeZone: "UTC" })),
                      active : 1
                 }).then(()=>{
@@ -326,9 +332,22 @@ console.log('item = ', item)
                  
               });
 
-            }
+            },
+            
         
-}
+},
+beforeRouteEnter (to, from, next) {
+          next(vm=>{
+          //   firebase.auth().onAuthStateChanged(user=>{
+              if(document.cookie){
+                next();
+              }else{
+                vm.$router.push('/')
+              }
+          //   })
+          })
+        }
+
 }
 </script>
 

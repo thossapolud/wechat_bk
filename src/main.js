@@ -5,8 +5,15 @@ import store from './store'
 import firebase from "firebase";
 import vuetify from './plugins/vuetify';
 import '@babel/polyfill'
+import VueCookies from 'vue-cookies'
+// import VueFire from 'vuefire'
+// import { firestorePlugin } from 'vuefire'
 
+// Vue.use(firestorePlugin)
+Vue.use(VueCookies)
 Vue.config.productionTip = false
+// Vue.$cookies.config('7d')
+// Vue.use(VueFire)
 require("firebase/firestore");
 
 const firebaseConfig = {

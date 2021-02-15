@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
 import PrivateChat from '../views/PrivateChat.vue'
 import Login  from '../views/Login.vue'
 import Admin  from '../views/Admin.vue'
@@ -10,6 +9,7 @@ import UserManage from '../views/userManage.vue'
 import Responsible from '../views/responsible.vue'
 import TagManage from  '../views/tagManage.vue'
 import Broadcast from '../views/broadcast.vue'
+import Navbar from '../views/Navbar.vue'
 
 
 Vue.use(VueRouter)
@@ -18,12 +18,7 @@ const routes = [
 
   {
     path: '/',
-    name: 'PrivateChat',
-    component: PrivateChat
-  },
-  {
-    path: '/login',
-    name: 'Login',
+    name: 'login',
     component: Login
   },
   {
@@ -37,20 +32,22 @@ const routes = [
     component: GroupLineList
   },
   {
-    path: '/groupLineListDev',
-    name: 'GroupLineListDev',
-    component: GroupLineListDev
+    path: '/navbar',
+    name: 'Navbar',
+    component: Navbar,
+    children: [
+      // UserHome will be rendered inside User's <router-view>
+      // when /user/:id is matched
+      { path: '/userManage', component: UserManage },
+      { path: '/responsible', component: Responsible },
+      { path: '/groupLineListDev', component: GroupLineListDev },
+      { path: '/chat', component: PrivateChat },
+      { path: '/broadcast', component: Broadcast }
+
+      // ...other sub routes
+    ]
   },
-  {
-    path: '/userManage',
-    name: 'UserManage',
-    component: UserManage
-  },
-  {
-    path: '/responsible',
-    name: 'Responsible',
-    component: Responsible
-  },
+  
   {
     path: '/tagmanage',
     name: 'TagManage',

@@ -102,7 +102,8 @@
 
 <script>
 const axios = require("axios");
-const APIURL = "http://127.0.0.1:3000";
+// const APIURL = "http://127.0.0.1:3000";https://wechatbackend.herokuapp.com/
+const APIURL = "https://wechatbackend.herokuapp.com"
   export default {
     data: () => ({
       indexKey:'',
@@ -173,7 +174,7 @@ const APIURL = "http://127.0.0.1:3000";
                   this.successSnackbar = true
                   this.getAllUser()
                 })
-
+                
           // this.saveData.push({
           //   username : user,
           //   password : password,
@@ -290,7 +291,18 @@ const APIURL = "http://127.0.0.1:3000";
       //   }
       //   this.close()
       // },
-    }
+    },
+      beforeRouteEnter (to, from, next) {
+          next(vm=>{
+          //   firebase.auth().onAuthStateChanged(user=>{
+              if(document.cookie){
+                next();
+              }else{
+                vm.$router.push('/')
+              }
+          //   })
+          })
+        }
   }
 </script>
 

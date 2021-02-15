@@ -47,7 +47,8 @@
 
 <script>
 const axios = require("axios");
-const APIURL = "http://127.0.0.1:3000";
+// const APIURL = "http://127.0.0.1:3000";
+const APIURL = "https://wechatbackend.herokuapp.com"
 
     export default {
         data() {
