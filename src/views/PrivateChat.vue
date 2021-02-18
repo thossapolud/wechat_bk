@@ -40,7 +40,7 @@
                 </v-row>
                 <v-row>
                 <v-col>
-                  <v-list-item-title>add tag</v-list-item-title>
+                  <v-list-item-title @click="openTag(itemmem.indexKey,item.indexGroupLine,itemmem.bodymember.lineUserId,item.groupLine_UserId)">add tag</v-list-item-title>
                   </v-col>
                 </v-row>
                 <!-- <v-row>
@@ -96,18 +96,26 @@
               <!-- <div :class="[item.type!=='in'?'sent_msg':'received_msg']"> -->
               <div :class="[item.type!=='in'?'sent_msg':'received_msg']">
                 <div class="received_withd_msg">
-                  <p>{{item.message}}</p>
+                  <p v-if="item.typeMessage === 'text'">{{item.message}}</p>
+                  <v-img v-if="item.typeMessage === 'sticker'" :src="item.message" height="140px" width="150px"></v-img>
+                  <v-img v-if="item.typeMessage === 'image'" :src="item.message" height="200px" width="200px"></v-img>
                   <br>
                 </div>
               </div>
             </div>
-            
           </div>
           <div class="type_msg">
             <div class="input_msg_write">
               <input @keyup.enter="sendMessage" v-model="message" type="text" class="write_msg" placeholder="Type a message" />
-              
               <v-btn  v-if="message != ''" @click="sendMessage()" class="msg_send_btn" type="button">  <v-icon dark right >mdi-send-outline</v-icon></v-btn>
+              <v-row>
+              <v-col cols="12" md="3">
+              <v-file-input v-model="photo" accept="image/png, image/jpeg, image/bmp" placeholder="Pick a photo" prepend-icon="mdi-camera" multiple ></v-file-input>
+              </v-col>
+              <v-col cols="12" md="3">
+              <v-btn @click="uploadImg(photo)">Upload</v-btn>
+              </v-col>
+              </v-row>
             </div>
           </div>
         </div>
@@ -116,6 +124,7 @@
     </div>
     <v-dialog v-model="dialogNote" max-width="500px" persistent  >
     <v-container >
+    <v-card>
     <v-row>
           <v-col cols="12" >
         <v-textarea outlined label="Outlined textarea"  :value="noteMessage" v-model="note" background-color="amber lighten-4"></v-textarea>
@@ -127,7 +136,43 @@
       </v-col>
       </v-col>
       </v-row>
+      </v-card>
       </v-container>
+      </v-dialog>
+      <v-dialog v-model="tagDialog" width="500px">
+      <v-card>
+      <v-row >
+        <v-col cols="12" md="3">
+         <h1>tag</h1>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12" md="3">
+          <v-btn @click="openAddTag()">cerate new tag</v-btn>
+        </v-col>
+      </v-row>
+      <div v-for="(item, index) in tag" :key="index">
+      <v-row>
+      <v-col>
+      <v-checkbox v-model="item.selected" :label="item.tag"></v-checkbox>
+      </v-col>
+      </v-row>
+      </div>
+      <!--<v-text-field label="Filled" placeholder="Dense & Rounded" filled rounded dense></v-text-field>-->
+      <v-btn color="primary" @click="saveTag()">Save</v-btn>
+      <v-btn color="red" @click="closeDialogTag()">Close</v-btn>
+      </v-card>
+      </v-dialog>
+      <v-dialog v-model="addTagDialog" width="500px">
+      <v-card>
+      <h1>new tag</h1>
+      <v-row>
+      <v-col cols="12">
+          <v-text-field label="Add tag" filled rounded dense v-model="newTag"></v-text-field>
+        </v-col>
+      </v-row>
+      <v-btn outlined color="red" @click="closeDialogNewTag()">Cancel</v-btn><v-btn outlined color="success" @click="saveNewTag(newTag)">Create</v-btn>
+      </v-card>
       </v-dialog>
       <v-snackbar v-model="snackbar" >
       บันทึกเรียบร้อย
@@ -137,24 +182,36 @@
         </v-btn>
       </template>
     </v-snackbar>
-      
+      <v-btn @click="Ftest()">test</v-btn>
+     image
+      <v-img :scr="test" v-model="test"></v-img>
     </v-app>
 </template>
 
 <script>
 import firebase from 'firebase/app'
+import "firebase/storage"
 import firestore from "firebase/firestore"
 import VueCookies from 'vue-cookies'
     const axios = require("axios");
-    // const APIURL = "http://127.0.0.1:8000";
-    const APIURL = "https://wechatbackend.herokuapp.com"
+    const APIURL = "http://127.0.0.1:8000";
+    // const APIURL = "https://wechatbackend.herokuapp.com"
     // axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 
     export default {
         name: 'PrivateChat',
         data() {
             return {
-
+              test:null,
+              photo:[],
+              userIdLineGroup:null,
+              userIdLine:null,
+              indexGroupLine:null,
+              UserLineIndex:null,
+              newTag:null,
+              addTagDialog : false,
+                tag:[],
+                tagDialog: false,
                 NoteindexKey:'',
                 note:'',
                 vreplyToken:'',
@@ -184,6 +241,157 @@ import VueCookies from 'vue-cookies'
           
         },
         methods: {
+            Ftest(){
+              axios.get(APIURL+'/getphoto').then(response => {
+                this.test = response.data
+                
+                console.log('response.data = ', this.test.data)
+              })
+              const storageRef = firebase.storage().ref('test/test');
+               var uploadTask = storageRef.put(this.test.data)
+               uploadTask.on('state_changed',function(snapshot){
+                 var progress=(snapshot.bytesTransferred/snapshot.totalBytes)*100;
+                 console.log('upload is'+progress+"done")
+               },function(error){
+                 console.log(error.message)
+               },function(){
+                 uploadTask.snapshot.ref.getDownloadURL().then(function(DownloadURL){
+
+                 })
+               })
+
+            },
+            uploadImg(model){
+              console.log('log = ',model)
+              // let fileName = model.name
+               const scrollToBottom = this.scrollToBottom()
+               const replyToken = this.vreplyToken
+               const AccessToken = this.vAccessToken
+               const receiverlineUserId = this.receiverlineUserId
+               const lineGroupUserId = this.vlineGroupUserId
+               const storageRef = firebase.storage().ref(''+receiverlineUserId+'/'+model[0].name);
+               var uploadTask = storageRef.put(model[0])
+               uploadTask.on('state_changed',function(snapshot){
+                 var progress=(snapshot.bytesTransferred/snapshot.totalBytes)*100;
+                 console.log('upload is'+progress+"done")
+               },function(error){
+                 console.log(error.message)
+               },function(){
+                 uploadTask.snapshot.ref.getDownloadURL().then(function(DownloadURL){
+              console.log('vreplyToken =',replyToken)
+                  //  console.log('this.vreplyToken =',this.vreplyToken)
+                   axios.post(APIURL+'/reply',{  // ตอบกลับไปยังไลน์
+                                            "reply_token" : replyToken,
+                                            "accessToken" : AccessToken,
+                                            "message" : DownloadURL,
+                                            "lineUserId" : receiverlineUserId,
+                                            "typeMessage" : 'image',
+                                            "vmod" : 'active',
+                                            "lineAdId" : lineGroupUserId,
+                                            "type" : 'out',
+                                            "read" : 1,
+                                            "createdAt" : (new Date().toLocaleString("tr-TR", { timeZone: "UTC" }))
+                                            }).then((response)=>{
+              })
+              setTimeout(()=>{
+                  scrollToBottom
+                },1000);
+                 })
+               })
+               this.photo = []
+            },
+            saveTag(){
+              // console.log('tag = ', this.tag)
+              for (let index = 0; index < this.tag.length; index++) {
+                // if(this.tag[index].selected === true){
+                //   console.log('test')
+                  db.collection("tag").doc(this.tag[index].tagIndexKey).update({
+                    selected: this.tag[index].selected
+                // })
+                })
+              }
+              this.userIdLine = null
+              this.indexGroupLine = null
+              this.userIdLineGroup = null
+              this.UserLineIndex = null
+              this.tagDialog = false
+
+            },
+            closeDialogTag(){
+              this.userIdLine = null
+              this.indexGroupLine = null
+              this.userIdLineGroup = null
+              this.UserLineIndex = null
+              this.tagDialog = false
+            },
+            closeDialogNewTag(){
+              this.newTag = null
+              this.addTagDialog = false
+              
+            },
+            saveNewTag(newtag){
+              db.collection('tag').add({
+                tag : newtag,
+                lineUserId: this.userIdLine,
+                lineAdId: this.userIdLineGroup,
+                indexGroupLine: this.indexGroupLine,
+                indexUser:this.UserLineIndex,
+                userWeb : $cookies.get('user'),
+                createdAt : (new Date().toLocaleString("tr-TR", { timeZone: "UTC" })),
+                 active : 1,
+                 selected : false
+              //   this.userIdLine
+              // this.indexGroupLine
+              // this.userIdLineGroup
+              // this.UserLineIndex
+
+              })
+              // console.log('indexKey = ', this.UserLineIndex)
+              console.log('new tag = ', newtag)
+              this.newTag = null
+              this.addTagDialog = false
+              this.snackbar = true
+            },
+            openAddTag(){
+              // this.tagDialog = false
+              this.addTagDialog = true
+              
+            },
+            openTag(indexKey,indexGroupLine,userIdLine,userIdLineGroup){
+              console.log('indexKey =',indexKey)
+              console.log('indexGroupLine =',indexGroupLine)
+              console.log('userIdLine =',userIdLine)
+              console.log('userIdLineGroup =',userIdLineGroup)
+              this.userIdLine = userIdLine
+              this.indexGroupLine = indexGroupLine
+              this.userIdLineGroup = userIdLineGroup
+              this.UserLineIndex = indexKey
+              this.tagDialog = true
+               db.collection("tag").where('indexUser','==',indexKey).orderBy('createdAt').onSnapshot((querySnapshot) => {
+                  // db.collection("chat").where('author','==',user).orderBy('createdAt').onSnapshot((querySnapshot) => {
+                  let data=[];
+                  querySnapshot.forEach((doc) => {
+                    if($cookies.get('user') === doc.data().userWeb){
+                      data.push({
+                        tagIndexKey: doc.id,
+                        active:doc.data().active,
+                        createdAt:doc.data().createdAt,
+                        indexGroupLine:doc.data().indexGroupLine,
+                        indexUser:doc.data().indexUser,
+                        lineAdId:doc.data().lineAdId,
+                        lineUserId:doc.data().lineUserId,
+                        selected:doc.data().selected,
+                        tag:doc.data().tag,
+                        userWeb:doc.data().userWeb
+                      })
+                    }
+                      
+                      // Object.assign(data,{'TagInxKey' : doc.id})
+                  })
+                  console.log(' data =',data);
+                  this.tag = data
+              });
+            },
             cancelNote(){
               this.dialogNote = false
             },
@@ -325,10 +533,8 @@ import VueCookies from 'vue-cookies'
                       this.vreplyToken = doc.data().reply_token
                   })
                   this.messageByUser=Msg
-                  // this.vreplyToken=this.messageByUser.sort().reply_token
-                  // console.log('vreplyToken = ',this.vreplyToken)
               })
-              // console.log('test data ',this.messageByUser)
+              console.log('test data ',this.messageByUser)
               setTimeout(()=>{
                   this.scrollToBottom();
                 },10);
